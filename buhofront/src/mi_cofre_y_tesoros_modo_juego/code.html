@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #F8FBFF;
+      }
+      body {
+        overscroll-behavior: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+      .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+    }
+    ::-webkit-scrollbar { display: none; }
+
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 8px 24px rgba(254, 211, 58, 0.45)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 14px 32px rgba(254, 211, 58, 0.7)); }
+    }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(4deg); }
+    }
+    .animate-float { animation: float-slow 3.2s ease-in-out infinite; }
+    .animate-glow-chest { animation: pulse-glow 2.4s ease-in-out infinite; }
+    .animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#e3f0f8",
+            "secondary-container": "#fed33a",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#005db8",
+            "primary-container": "#4d96ff",
+            "secondary-fixed": "#ffe082",
+            "secondary": "#725c00",
+            "tertiary": "#b52330",
+            "surface": "#f4faff",
+            "on-surface": "#111d23",
+            "on-surface-variant": "#414753",
+            "surface-container-high": "#ddeaf2"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Be Vietnam Pro", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-gradient-to-b from-[#EBF5FF] via-[#FFFDF5] to-[#FFF5E6] font-body text-on-surface flex flex-col min-h-screen select-none overflow-x-hidden">
+<!-- Floating playful cloud shapes in background -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+<div class="absolute -top-10 -left-12 w-48 h-48 bg-white/70 rounded-full blur-xl"></div>
+<div class="absolute top-1/4 -right-16 w-56 h-56 bg-sky-200/40 rounded-full blur-2xl"></div>
+<div class="absolute bottom-1/3 -left-10 w-64 h-64 bg-amber-100/60 rounded-full blur-2xl"></div>
+<!-- Mini floating cartoon stars -->
+<div class="absolute top-24 left-6 text-xl opacity-70 animate-wiggle">✨</div>
+<div class="absolute top-44 right-8 text-2xl opacity-80 animate-float">⭐</div>
+<div class="absolute top-[520px] left-5 text-xl opacity-60">✨</div>
+</div>
+<!-- Game HUD Header -->
+<header class="fixed top-0 w-full z-40 pt-safe bg-white/80 backdrop-blur-md border-b-2 border-sky-100 shadow-sm">
+<div class="h-20 px-4 flex items-center justify-between">
+<!-- Player Avatar Pill -->
+<div class="flex items-center gap-2.5 bg-white pl-1.5 pr-4 py-1.5 rounded-full border-2 border-sky-200 shadow-[0_4px_0_#BAE6FD]">
+<img alt="Avatar de Mateo" class="w-10 h-10 rounded-full object-cover ring-2 ring-amber-300" src="https://lh3.googleusercontent.com/aida/AEtjO1X1vniouClNKBAQ5Qp0Ts8lh93_2xw-Sd84kIpKY_Bzu6BIFHmCFS2cYm0Qy2a1waWsEDT5eq6iKEUo2Xsv-GAOQenW_tDmHRiQMjWo0g0XyN6VokfBl2A4PL6yqhSpuQQzlYSEqZQlX8TMyN8duuwEvc6qfpCK8gz6VHwQGVm1Lmni9MMbDjPQTGsPPjQGqkercT8KfOBUKtsBog0qO1ogIsxgnryCzQLgUWvj7of4RSsMEE2QDLEv1Uw"/>
+<div class="flex flex-col">
+<span class="font-headline font-extrabold text-sm text-[#004B99] leading-tight">Mateo</span>
+<span class="font-headline font-black text-[10px] text-amber-500 uppercase tracking-wider">Nivel 3 🌟</span>
+</div>
+</div>
+<!-- Currency Pills (Gems & Stars) -->
+<div class="flex items-center gap-2">
+<!-- Stars -->
+<div class="flex items-center gap-1.5 bg-[#FFF4CC] border-2 border-[#FED33A] px-3 py-1.5 rounded-full shadow-[0_3px_0_#F59E0B]">
+<span class="text-lg leading-none">⭐</span>
+<span class="font-headline font-black text-amber-900 text-sm leading-none">140</span>
+</div>
+<!-- Gems -->
+<div class="flex items-center gap-1.5 bg-[#E0F2FE] border-2 border-[#38BDF8] px-3 py-1.5 rounded-full shadow-[0_3px_0_#0284C7]">
+<span class="text-lg leading-none">💎</span>
+<span class="font-headline font-black text-sky-900 text-sm leading-none">45</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Game Stage -->
+<main class="flex-1 flex flex-col relative z-10 pt-24 pb-28 px-4 max-w-md mx-auto w-full">
+<!-- Big Title Banner -->
+<div class="text-center my-2">
+<h1 class="font-headline font-black text-3xl text-[#004B99] tracking-tight drop-shadow-sm flex items-center justify-center gap-2">
+        ¡Tu Sala del Tesoro! 
+        <span class="text-2xl animate-wiggle inline-block">👑</span>
+</h1>
+<p class="font-headline font-bold text-sky-700/80 text-sm mt-0.5">¡Toca para jugar y coleccionar!</p>
+</div>
+<!-- Centerpiece Stage: Mystery Chest Island -->
+<div class="relative mt-3 mb-5 bg-gradient-to-b from-[#FFFDF0] to-[#FEF3C7] rounded-[2.5rem] border-4 border-[#FDE68A] p-5 shadow-[0_12px_28px_rgba(245,158,11,0.2),inset_0_4px_0_#FFFFFF] flex flex-col items-center text-center overflow-visible">
+<!-- Mascot Kiko Cheering on the side -->
+<div class="absolute -top-10 -right-2 w-24 h-24 animate-float z-20 pointer-events-none drop-shadow-lg">
+<img alt="Kiko Mascota" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Wzenk1spyGnCeU-UHu1YAgRL9zcMsi_PQ2NH7s18jONyMasZs7Wf-v0YVaAY4Nk8LQKwvytMhHGka83JmcRdQYRmbca-GmO-2LQzDp60bu6FdoFBKwqYJowJZME6S6dfCIbT7QQ5TC7OdJ6dAUILyhQCPK-cNFlo7gSraNuTypFZmarufj8vRdOG9Fr0Phl_Mj3ZqcHYexmFXvh1rkNcJlGN1VJ_TX0UsWRW6Kf0fVwvkjXCG0aipr9e8"/>
+<!-- Fun speech bubble -->
+<div class="absolute -bottom-2 -left-8 bg-white border-2 border-amber-300 font-headline font-black text-[10px] text-amber-800 px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
+          ¡Ábrelo! 👇
+        </div>
+</div>
+<!-- Pedestal glow backdrop -->
+<div class="w-44 h-44 rounded-full bg-gradient-to-tr from-amber-300/40 via-yellow-200/60 to-white/90 blur-xl absolute top-6 pointer-events-none"></div>
+<!-- Interactive Treasure Chest Button -->
+<div class="relative z-10 my-2 cursor-pointer transition-transform active:scale-90" id="magic-chest" onclick="openChest()">
+<div class="w-32 h-32 rounded-3xl bg-gradient-to-b from-[#FFD54F] to-[#FFA000] border-4 border-white shadow-[0_10px_0_#D97706,0_16px_25px_rgba(217,119,6,0.35)] flex items-center justify-center text-6xl animate-glow-chest">
+<span id="chest-icon">🎁</span>
+</div>
+<!-- Golden Key Badge -->
+<div class="absolute -bottom-2 -right-2 bg-gradient-to-r from-amber-400 to-amber-500 border-2 border-white rounded-full px-2.5 py-1 flex items-center gap-1 shadow-[0_3px_0_#B45309]">
+<span class="text-xs">🔑</span>
+<span class="font-headline font-black text-xs text-white">¡LISTO!</span>
+</div>
+</div>
+<!-- Chunky Action Button -->
+<button class="mt-4 w-full py-3.5 px-6 rounded-2xl bg-[#0084FF] text-white font-headline font-black text-xl tracking-wide shadow-[0_6px_0_#0056B3] active:translate-y-1.5 active:shadow-[0_0_0_#0056B3] transition-all flex items-center justify-center gap-2" id="chest-action-btn" onclick="openChest()">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">lock_open</span>
+<span>¡TOCAR PARA ABRIR!</span>
+</button>
+</div>
+<!-- Collectibles Section Header -->
+<div class="flex items-center justify-between px-2 mb-2">
+<div class="flex items-center gap-1.5">
+<span class="text-2xl">🧸</span>
+<h2 class="font-headline font-extrabold text-xl text-[#003875]">Tus Juguetes</h2>
+</div>
+<span class="font-headline font-black text-xs bg-sky-100 text-[#005DB8] px-3 py-1 rounded-full border border-sky-200">
+        3 de 4
+      </span>
+</div>
+<!-- Big Chunky Visual Toy Grid (2x2) -->
+<div class="grid grid-cols-2 gap-3.5">
+<!-- Toy 1: Pup Hero (Unlocked) -->
+<div class="group bg-white rounded-3xl p-3.5 border-4 border-[#BAE6FD] shadow-[0_6px_0_#7DD3FC] flex flex-col items-center text-center active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-2xl bg-gradient-to-b from-sky-100 to-sky-200 flex items-center justify-center text-4xl shadow-inner mb-2 border-2 border-white">
+          🐶
+        </div>
+<span class="font-headline font-black text-sm text-[#004B99] leading-tight">Cachorro Sol</span>
+<div class="mt-2 flex items-center gap-1 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">
+<span class="text-xs">⭐</span>
+<span class="font-headline font-extrabold text-[11px] text-amber-900">¡Obtenido!</span>
+</div>
+</div>
+<!-- Toy 2: Space Rocket (Unlocked) -->
+<div class="group bg-white rounded-3xl p-3.5 border-4 border-[#FED7AA] shadow-[0_6px_0_#FDBA74] flex flex-col items-center text-center active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-2xl bg-gradient-to-b from-orange-100 to-amber-200 flex items-center justify-center text-4xl shadow-inner mb-2 border-2 border-white">
+          🚀
+        </div>
+<span class="font-headline font-black text-sm text-[#9A3412] leading-tight">Súper Cohete</span>
+<div class="mt-2 flex items-center gap-1 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">
+<span class="text-xs">⭐</span>
+<span class="font-headline font-extrabold text-[11px] text-amber-900">¡Obtenido!</span>
+</div>
+</div>
+<!-- Toy 3: Magic Dino (Unlocked) -->
+<div class="group bg-white rounded-3xl p-3.5 border-4 border-[#BBF7D0] shadow-[0_6px_0_#86EFAC] flex flex-col items-center text-center active:scale-95 transition-transform">
+<div class="w-16 h-16 rounded-2xl bg-gradient-to-b from-emerald-100 to-green-200 flex items-center justify-center text-4xl shadow-inner mb-2 border-2 border-white">
+          🦖
+        </div>
+<span class="font-headline font-black text-sm text-[#14532D] leading-tight">Dino Mágico</span>
+<div class="mt-2 flex items-center gap-1 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">
+<span class="text-xs">⭐</span>
+<span class="font-headline font-extrabold text-[11px] text-amber-900">¡Obtenido!</span>
+</div>
+</div>
+<!-- Toy 4: Royal Crown (Locked mystery) -->
+<div class="group bg-[#F1F5F9] rounded-3xl p-3.5 border-4 border-[#CBD5E1] shadow-[0_6px_0_#94A3B8] flex flex-col items-center text-center active:scale-95 transition-transform opacity-85">
+<div class="w-16 h-16 rounded-2xl bg-slate-200 flex items-center justify-center text-3xl shadow-inner mb-2 border-2 border-white text-slate-400">
+          🔒
+        </div>
+<span class="font-headline font-black text-sm text-slate-600 leading-tight">Gran Corona</span>
+<div class="mt-2 flex items-center gap-1 bg-slate-200 px-2 py-0.5 rounded-full border border-slate-300">
+<span class="font-headline font-black text-[10px] text-slate-600">¡Por abrir!</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Super Minimalist Kid-Friendly Bottom Arcade Bar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-white border-t-4 border-[#E0F2FE] shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
+<div class="flex justify-around items-center h-20 px-6 max-w-md mx-auto">
+<!-- Casa / Mundo -->
+<a class="flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-slate-400 active:scale-90 transition-transform" href="#">
+<span class="text-2xl mb-0.5">🏡</span>
+<span class="font-headline font-black text-xs text-slate-500">Inicio</span>
+</a>
+<!-- Jugar / Misiones -->
+<a class="flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-slate-400 active:scale-90 transition-transform" href="#">
+<span class="text-2xl mb-0.5">🎮</span>
+<span class="font-headline font-black text-xs text-slate-500">Jugar</span>
+</a>
+<!-- Mi Cofre / Álbum (Active Tab Chunky Button) -->
+<a class="flex flex-col items-center justify-center bg-[#0084FF] text-white px-4 py-2 rounded-2xl border-2 border-white shadow-[0_4px_0_#0056B3] -translate-y-2 active:scale-95 transition-all" href="#">
+<span class="text-2xl leading-none">🎁</span>
+<span class="font-headline font-black text-xs mt-1 text-white tracking-wide">Premios</span>
+</a>
+</div>
+</nav>
+<!-- Sound & Chest Celebration Micro-interaction -->
+<script>
+    function openChest() {
+      const chestIcon = document.getElementById('chest-icon');
+      const actionBtn = document.getElementById('chest-action-btn');
+      const chestContainer = document.getElementById('magic-chest');
+
+      // Wiggle & pop animation
+      chestContainer.classList.add('scale-110');
+      chestIcon.textContent = '🌟';
+      actionBtn.classList.remove('bg-[#0084FF]', 'shadow-[0_6px_0_#0056B3]');
+      actionBtn.classList.add('bg-[#10B981]', 'shadow-[0_6px_0_#047857]');
+      actionBtn.innerHTML = '<span class="text-2xl">🎉</span> <span>¡PREMIO DESCUBIERTO!</span>';
+
+      setTimeout(() => {
+        chestIcon.textContent = '👑';
+      }, 500);
+
+      setTimeout(() => {
+        chestContainer.classList.remove('scale-110');
+      }, 800);
+
+      setTimeout(() => {
+        chestIcon.textContent = '🎁';
+        actionBtn.classList.add('bg-[#0084FF]', 'shadow-[0_6px_0_#0056B3]');
+        actionBtn.classList.remove('bg-[#10B981]', 'shadow-[0_6px_0_#047857]');
+        actionBtn.innerHTML = '<span class="material-symbols-outlined text-2xl" style="font-variation-settings: \'FILL\' 1;">lock_open</span><span>¡TOCAR PARA ABRIR!</span>';
+      }, 4000);
+    }
+  </script>
+</body></html>

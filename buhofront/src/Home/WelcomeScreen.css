@@ -1,0 +1,538 @@
+/* WelcomeScreen.css */
+
+/* Base resets and global styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fefff4;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: #111d23;
+}
+
+/* Main container */
+.welcome-main {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  background-color: #ffc800ae;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  padding: 1rem 1.25rem 2.5rem 1.25rem;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Background ornaments */
+.ornament {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.ornament-1 {
+  top: -2.5rem;
+  left: -1.5rem;
+  width: 8rem;
+  height: 8rem;
+  background-color: rgba(254, 211, 58, 0.2);
+  filter: blur(2rem);
+}
+
+.ornament-2 {
+  top: 33.333%;
+  right: -2rem;
+  width: 10rem;
+  height: 10rem;
+  background-color: rgba(77, 150, 255, 0.15);
+  filter: blur(2rem);
+}
+
+.ornament-3 {
+  bottom: 5rem;
+  left: 1rem;
+  width: 7rem;
+  height: 7rem;
+  background-color: rgba(255, 96, 100, 0.15);
+  filter: blur(1.5rem);
+}
+
+/* Audio prompt bar */
+.audio-prompt-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(77, 150, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.audio-speaker-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #005db8;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.audio-speaker-btn:active {
+  transform: scale(0.95);
+}
+
+.audio-icon {
+  color: #fed33a;
+  font-size: 1.25rem;
+}
+
+.audio-label {
+  color: #002e61;
+  white-space: nowrap;
+}
+
+.audio-wave {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-right: 0.5rem;
+}
+
+.wave-bar {
+  width: 0.375rem;
+  border-radius: 9999px;
+  animation: bounce 0.8s infinite;
+}
+
+.wave-bar-1 {
+  height: 0.75rem;
+  background-color: #005db8;
+  animation-delay: 0.1s;
+}
+
+.wave-bar-2 {
+  height: 1.25rem;
+  background-color: #4d96ff;
+  animation-delay: 0.25s;
+}
+
+.wave-bar-3 {
+  height: 0.5rem;
+  background-color: #005db8;
+  animation-delay: 0.4s;
+}
+
+.wave-bar-4 {
+  height: 1rem;
+  background-color: #fed33a;
+  animation-delay: 0.15s;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-25%);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-bounce {
+  animation: bounce 0.6s ease infinite;
+}
+
+/* Welcome card */
+.welcome-card {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 3rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* Badges */
+.badge {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+}
+
+.badge-level {
+  top: 1rem;
+  left: 1.25rem;
+  background-color: #ffe082;
+  color: #231b00;
+}
+
+.badge-points {
+  top: 1rem;
+  right: 1.25rem;
+  background-color: #e9f6fd;
+  color: #005db8;
+}
+
+.badge-icon {
+  font-size: 0.875rem;
+}
+
+/* Mascot */
+.mascot-wrapper {
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.mascot-container {
+  width: 12rem;
+  height: 12rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .mascot-container {
+    width: 14rem;
+    height: 14rem;
+  }
+}
+
+.mascot-glow {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(254, 211, 58, 0.3);
+  border-radius: 50%;
+  filter: blur(1.5rem);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.mascot-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.mascot-avatar:hover {
+  transform: scale(1.05);
+}
+
+.mascot-avatar:active {
+  transform: rotate(6deg);
+}
+
+/* Greeting */
+.greeting {
+  margin-bottom: 1rem;
+}
+
+.greeting-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -0.01em;
+  font-weight: 800;
+  color: #111d23;
+  margin: 0 0 0.25rem 0;
+}
+
+.greeting-subtitle {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #414753;
+  margin: 0;
+}
+
+/* Profile island */
+.profile-island {
+  width: 100%;
+  background-color: #e9f6fd;
+  padding: 0.75rem;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background-color: #ffe082;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-avatar-icon {
+  color: #231b00;
+  font-size: 1.875rem;
+}
+
+.profile-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 1rem;
+  height: 1rem;
+  background-color: #4d96ff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #ffffff;
+}
+
+.profile-text {
+  text-align: left;
+  min-width: 0;
+}
+
+.profile-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #111d23;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-detail {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+  color: #414753;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.profile-edit-btn {
+  position: relative;
+  background-color: #d7e4ec;
+  border-radius: 9999px;
+  padding: 0.625rem;
+  color: #005db8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-edit-btn:hover {
+  background-color: #d7e4ec;
+  transform: translateY(0.125rem);
+}
+
+.profile-edit-btn:active {
+  transform: translateY(0.125rem);
+}
+
+.profile-edit-icon {
+  font-size: 1.25rem;
+}
+
+/* Start button */
+.start-btn-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.start-btn {
+  width: 100%;
+  height: 4rem;
+  border-radius: 9999px;
+  background-color: #fed33a;
+  color: #002e61;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+  box-shadow: 0 6px 0 #d1a800, 0 10px 20px rgba(254, 211, 58, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.start-btn:active {
+  transform: translateY(0.25rem);
+}
+
+.start-btn-emoji {
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.start-btn:hover .start-btn-emoji {
+  transform: scale(1.25);
+}
+
+/* Daily quest */
+.daily-quest {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #005db8;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+}
+
+.daily-quest-icon {
+  font-size: 0.875rem;
+  color: #fed33a;
+}
+
+/* Parent gate */
+.parent-gate-wrapper {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.parent-gate-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #e3f0f8;
+  border-radius: 9999px;
+  color: #414753;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.parent-gate-btn:hover {
+  background-color: #ddeaf2;
+}
+
+.parent-gate-btn:active {
+  transform: scale(0.95);
+}
+
+.parent-gate-icon {
+  font-size: 1.125rem;
+}
+
+/* Utility: hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Material Symbols base */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}

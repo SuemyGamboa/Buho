@@ -1,0 +1,694 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24..48,400..700,0..1,-50..200');
+
+:root {
+  --primary: #005db8;
+  --primary-container: #4d96ff;
+  --primary-fixed: #d6e3ff;
+  --on-primary-fixed: #001b3e;
+  --secondary-container: #fed33a;
+  --on-secondary-container: #715b00;
+  --secondary-fixed: #ffe082;
+  --on-secondary-fixed: #231b00;
+  --tertiary: #b52330;
+  --tertiary-container: #ff6064;
+  --tertiary-fixed: #ffdad8;
+  --on-tertiary-fixed: #410007;
+  --surface: #f4faff;
+  --surface-container: #e3f0f8;
+  --surface-container-low: #e9f6fd;
+  --surface-container-lowest: #ffffff;
+  --surface-container-high: #ddeaf2;
+  --surface-container-highest: #d7e4ec;
+  --on-surface: #111d23;
+  --on-surface-variant: #414753;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--surface);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: var(--on-surface);
+  min-height: max(884px, 100dvh);
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============ HEADER ============ */
+.home-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  padding-top: env(safe-area-inset-top, 0px);
+  background-color: rgba(244, 250, 255, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 20px rgba(77, 150, 255, 0.08);
+}
+
+.home-header-content {
+  height: 5rem;
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.home-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.home-logo-img {
+  height: 2rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.home-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-logo-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.home-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  background-color: var(--primary-fixed);
+  color: var(--on-primary-fixed);
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  align-self: flex-start;
+}
+
+.home-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 14px;
+}
+
+.stat-yellow {
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+  box-shadow: 0 2px 0 #ecc228;
+}
+
+.stat-red {
+  background-color: var(--tertiary-fixed);
+  color: var(--on-tertiary-fixed);
+  box-shadow: 0 2px 0 #ffb3b0;
+}
+
+.stat-blue {
+  background-color: var(--surface-container-highest);
+  color: var(--primary);
+  box-shadow: 0 2px 0 #c1c6d5;
+}
+
+.stat-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-badge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.home-profile {
+  display: flex;
+  align-items: center;
+  padding-left: 0.25rem;
+}
+
+.home-profile-img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--primary-container);
+}
+
+/* ============ MAIN ============ */
+.home-main {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  padding-top: 5rem;
+  padding-bottom: 6rem;
+  background-color: var(--surface);
+  min-height: 100vh;
+}
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 1.25rem 2.5rem 1.25rem;
+  gap: 1.5rem;
+}
+
+/* ============ SALUDO ============ */
+.greeting-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background-color: var(--surface-container-low);
+  padding: 1rem;
+  border-radius: 28px;
+  box-shadow: 0 8px 24px rgba(77, 150, 255, 0.08);
+}
+
+.greeting-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.greeting-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.greeting-info {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--on-surface-variant);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 0.125rem 0 0 0;
+}
+
+.greeting-info strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.pulse-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--primary-container);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ============ BOTONES DE VOZ ============ */
+.voice-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.voice-btn-yellow {
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+  box-shadow: 0 4px 0 #ecc228;
+}
+
+.voice-btn-yellow:active {
+  transform: translateY(0.25rem);
+  box-shadow: none;
+}
+
+.voice-btn-small {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--surface-container-high);
+}
+
+.voice-btn-small:active {
+  transform: scale(0.95);
+}
+
+.voice-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+}
+
+.voice-btn-small .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
+.scale-110 {
+  transform: scale(1.1);
+}
+
+/* ============ MISIÓN DEL DÍA ============ */
+.mission-card {
+  background-color: var(--surface-container-lowest);
+  padding: 1.5rem;
+  border-radius: 28px;
+  box-shadow: 0 8px 24px rgba(77, 150, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.mission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mission-icon-wrapper {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--secondary-fixed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-secondary-fixed);
+  box-shadow: 0 3px 0 #ecc228;
+}
+
+.mission-icon-wrapper .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
+.mission-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.mission-badge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  background-color: var(--secondary-fixed);
+  color: var(--on-secondary-fixed);
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.mission-desc {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.progress-bar {
+  width: 100%;
+  background-color: var(--surface-container);
+  border-radius: 9999px;
+  height: 1.25rem;
+  padding: 0.25rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #4d96ff, #4ECB71, #75E292);
+  border-radius: 9999px;
+  transition: all 0.7s ease;
+}
+
+.progress-label {
+  position: absolute;
+  right: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  user-select: none;
+}
+
+/* ============ MATERIAS ============ */
+.materias-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.materias-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.25rem;
+}
+
+.materias-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+}
+
+.materias-badge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary);
+  background-color: var(--primary-fixed);
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* ============ TARJETA DE MATERIA ============ */
+.materia-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-container-lowest);
+  border-radius: 28px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(77, 150, 255, 0.12);
+  overflow: hidden;
+}
+
+.materia-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.materia-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.materia-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.materia-icon .material-symbols-outlined {
+  font-size: 2.25rem;
+}
+
+.materia-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.materia-badge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  align-self: flex-start;
+}
+
+.materia-badge-primary {
+  color: var(--primary);
+  background-color: var(--primary-fixed);
+}
+
+.materia-badge-tertiary {
+  color: var(--tertiary);
+  background-color: var(--tertiary-fixed);
+}
+
+.materia-badge-green {
+  color: #2b8244;
+  background-color: #e3f8eb;
+}
+
+.materia-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0.125rem 0 0 0;
+}
+
+.materia-desc {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--on-surface-variant);
+  margin: 0.75rem 0 0 0;
+}
+
+.materia-image-wrapper {
+  width: 100%;
+  height: 8rem;
+  border-radius: 1rem;
+  margin: 0.75rem 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.materia-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.materia-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 60%);
+}
+
+.materia-image-label {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.75rem;
+  color: #ffffff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* ============ PROGRESO INTERNO ============ */
+.materia-progress-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background-color: var(--surface-container-low);
+  padding: 0.5rem;
+  border-radius: 1rem;
+}
+
+.materia-progress-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.materia-progress-icon {
+  font-size: 1.5rem;
+}
+
+.materia-progress-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.materia-progress-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.materia-progress-sub {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 14px;
+  color: var(--on-surface-variant);
+}
+
+.mini-progress {
+  width: 6rem;
+  background-color: var(--surface-container);
+  border-radius: 9999px;
+  height: 0.75rem;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+/* ============ BOTÓN JUGAR ============ */
+.play-btn {
+  margin-top: 1rem;
+  width: 100%;
+  min-height: 3.5rem;
+  border-radius: 9999px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.play-btn:active {
+  transform: translateY(0.25rem);
+}
+
+.play-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+}
+
+/* ============ NAV INFERIOR ============ */
+.home-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background-color: rgba(244, 250, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 -4px 20px rgba(77, 150, 255, 0.12);
+}
+
+.home-nav-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 5rem;
+  padding: 0 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.5rem;
+  min-width: 4rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  color: var(--on-surface-variant);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-item-active {
+  background-color: var(--primary-container);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #005db8;
+  transform: translateY(-0.25rem);
+}
+
+.nav-icon {
+  font-size: 1.5rem;
+}
+
+.nav-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  margin-top: 0.25rem;
+}
+
+/* ============ MATERIAL SYMBOLS BASE ============ */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}

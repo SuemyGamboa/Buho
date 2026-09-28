@@ -1,0 +1,609 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --y: #FFD43B; --r: #FF5A5F; --g: #4ECB71;
+    --b: #4A90D9; --p: #9B59B6; --cream: #FFF9F0;
+    --dk: #2C2C2A; --font: 'Nunito', sans-serif;
+  }
+  body { background: transparent; font-family: var(--font); }
+  .app-shell {
+    width: 370px; margin: 0 auto;
+    background: var(--cream);
+    border-radius: 36px;
+    overflow: hidden;
+    border: 3px solid #e8dcc8;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    position: relative;
+  }
+  .screen { display: none; flex-direction: column; min-height: 680px; position: relative; }
+  .screen.active { display: flex; }
+
+  /* NAV DOTS */
+  .nav-row {
+    display: flex; justify-content: center; gap: 8px;
+    padding: 14px 0 8px;
+    background: rgba(255,255,255,0.5);
+    flex-wrap: wrap;
+    border-bottom: 2px solid #f0e6d0;
+  }
+  .nav-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2.5px solid var(--dk);
+    background: white;
+    font-size: 11px; font-weight: 900;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--dk); transition: all 0.2s; flex-shrink: 0;
+  }
+  .nav-dot.active { background: var(--y); border-color: var(--dk); transform: scale(1.15); }
+  .nav-dot:hover { transform: scale(1.1); }
+
+  /* SCREEN 1 - BIENVENIDA */
+  .s1-bg {
+    background: linear-gradient(160deg, #667eea 0%, #764ba2 100%);
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 40px 30px;
+    position: relative; overflow: hidden; min-height: 630px;
+  }
+  .s1-bubble { position: absolute; border-radius: 50%; opacity: 0.18; }
+  .s1-mascot {
+    width: 160px; height: 160px; border-radius: 50%;
+    background: white; display: flex; align-items: center; justify-content: center;
+    font-size: 80px; margin-bottom: 20px; position: relative; z-index: 1;
+    border: 5px solid var(--y);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  }
+  .s1-title {
+    font-size: 36px; font-weight: 900; color: white;
+    text-align: center; line-height: 1.1; margin-bottom: 10px; position: relative; z-index: 1;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  }
+  .s1-sub {
+    font-size: 17px; color: rgba(255,255,255,0.9); text-align: center;
+    margin-bottom: 36px; position: relative; z-index: 1; font-weight: 700;
+  }
+  .btn-main {
+    background: var(--y); border: none; border-radius: 50px;
+    padding: 18px 48px; font-size: 22px; font-weight: 900;
+    color: var(--dk); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 0 #c9a800, 0 8px 20px rgba(0,0,0,0.2);
+    position: relative; z-index: 1;
+  }
+  .btn-main:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #c9a800, 0 12px 24px rgba(0,0,0,0.25); }
+  .btn-main:active { transform: translateY(2px); box-shadow: 0 3px 0 #c9a800; }
+  .stars-deco { font-size: 22px; position: absolute; z-index: 1; }
+
+  /* SCREEN 2 - HOME */
+  .s2-header {
+    background: linear-gradient(135deg, var(--b) 0%, #6ab0f0 100%);
+    padding: 28px 24px 50px; position: relative; overflow: hidden;
+  }
+  .s2-wave {
+    position: absolute; bottom: -2px; left: 0; right: 0; height: 40px;
+    background: var(--cream); border-radius: 40px 40px 0 0;
+  }
+  .s2-greeting { font-size: 14px; color: rgba(255,255,255,0.85); font-weight: 700; margin-bottom: 4px; }
+  .s2-name { font-size: 28px; font-weight: 900; color: white; }
+  .s2-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--y); display: flex; align-items: center; justify-content: center;
+    font-size: 26px; border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .s2-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .s2-xp-bar-wrap { background: rgba(255,255,255,0.25); border-radius: 50px; height: 16px; overflow: hidden; }
+  .s2-xp-bar { background: var(--y); border-radius: 50px; height: 100%; width: 65%; }
+  .s2-xp-label { font-size: 12px; color: rgba(255,255,255,0.9); font-weight: 800; margin-top: 4px; }
+  .s2-content { padding: 10px 20px 24px; flex: 1; }
+  .section-title { font-size: 18px; font-weight: 900; color: var(--dk); margin: 16px 0 12px; }
+  .streak-card {
+    background: white; border-radius: 24px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 14px;
+    border: 2.5px solid #f0e0c0; margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .streak-icon { font-size: 40px; }
+  .streak-num { font-size: 32px; font-weight: 900; color: var(--r); line-height: 1; }
+  .streak-lbl { font-size: 13px; color: #888; font-weight: 700; }
+  .quick-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card {
+    background: white; border-radius: 20px; padding: 14px 16px;
+    border: 2px solid #f0e6d0; text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  }
+  .stat-num { font-size: 28px; font-weight: 900; }
+  .stat-lbl { font-size: 12px; font-weight: 700; color: #888; margin-top: 2px; }
+  .btn-play-home {
+    margin: 16px 0 0;
+    background: var(--g); border: none; border-radius: 50px;
+    width: 100%; padding: 18px; font-size: 20px; font-weight: 900;
+    color: white; cursor: pointer; transition: transform 0.15s;
+    box-shadow: 0 5px 0 #2d9e4a, 0 7px 18px rgba(78,203,113,0.35);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .btn-play-home:hover { transform: translateY(-2px); }
+  .btn-play-home:active { transform: translateY(2px); box-shadow: 0 2px 0 #2d9e4a; }
+
+  /* SCREEN 3 - MATERIAS */
+  .s3-header {
+    background: white; padding: 24px 20px 14px;
+    border-bottom: 2.5px solid #f0e6d0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .btn-back {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--cream); border: 2.5px solid #e8dcc8;
+    font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .screen-title { font-size: 22px; font-weight: 900; color: var(--dk); }
+  .mascot-mini { font-size: 28px; }
+  .subjects-grid { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; flex: 1; }
+  .subject-card {
+    border-radius: 28px; padding: 24px 22px;
+    display: flex; align-items: center; gap: 18px; cursor: pointer;
+    transition: transform 0.18s, box-shadow 0.18s; position: relative; overflow: hidden;
+    border: 3px solid rgba(0,0,0,0.1);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.1);
+    min-height: 110px;
+  }
+  .subject-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 0 rgba(0,0,0,0.12), 0 14px 30px rgba(0,0,0,0.15); }
+  .subject-card:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+  .subject-card.math { background: linear-gradient(135deg, #FF6B6B, #FF5A5F); }
+  .subject-card.spanish { background: linear-gradient(135deg, #5BC8F5, #4A90D9); }
+  .subject-card.science { background: linear-gradient(135deg, #5FE08A, #4ECB71); }
+  .subj-icon { font-size: 60px; flex-shrink: 0; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); }
+  .subj-info { flex: 1; }
+  .subj-name { font-size: 24px; font-weight: 900; color: white; text-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .subj-prog-label { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 700; margin: 6px 0 4px; }
+  .subj-prog-bar { background: rgba(255,255,255,0.3); border-radius: 50px; height: 12px; }
+  .subj-prog-fill { height: 100%; border-radius: 50px; background: rgba(255,255,255,0.9); }
+  .subj-stars { font-size: 16px; margin-top: 5px; }
+  .subj-arrow { font-size: 28px; color: rgba(255,255,255,0.7); font-weight: 900; flex-shrink: 0; }
+
+  /* SCREEN 4 - ACTIVIDADES */
+  .s4-header {
+    padding: 20px; border-bottom: 2px solid #f0e6d0;
+    display: flex; align-items: center; gap: 12px;
+    background: white;
+  }
+  .subj-badge { border-radius: 50px; padding: 8px 18px; font-size: 14px; font-weight: 900; color: white; }
+  .activities-list { padding: 12px 16px; flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+  .activity-item {
+    background: white; border-radius: 20px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px; cursor: pointer;
+    transition: transform 0.15s; border: 2.5px solid #f0e6d0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  }
+  .activity-item:hover { transform: scale(1.02); border-color: var(--b); }
+  .activity-item.done { opacity: 0.7; }
+  .act-num {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: white; flex-shrink: 0;
+  }
+  .act-info { flex: 1; }
+  .act-name { font-size: 15px; font-weight: 800; color: var(--dk); }
+  .act-type { font-size: 11px; font-weight: 700; color: #999; margin-top: 2px; }
+  .act-status { font-size: 22px; }
+  .act-stars { font-size: 13px; color: var(--y); }
+  .act-xp { font-size: 11px; font-weight: 900; color: #999; margin-top: 2px; }
+
+  /* SCREEN 5 - ACTIVIDAD */
+  .s5-header {
+    padding: 16px 20px; background: white; border-bottom: 2px solid #f0e6d0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .progress-steps { display: flex; gap: 6px; flex: 1; }
+  .step-dot {
+    flex: 1; height: 10px; border-radius: 50px;
+    background: #f0e6d0;
+  }
+  .step-dot.done { background: var(--g); }
+  .step-dot.active { background: var(--y); }
+  .s5-content { padding: 20px 16px; flex: 1; display: flex; flex-direction: column; }
+  .speech-bubble {
+    background: white; border-radius: 24px; padding: 18px 20px;
+    border: 2.5px solid #f0e6d0; margin-bottom: 20px;
+    display: flex; align-items: flex-start; gap: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.07); position: relative;
+  }
+  .bubble-mascot { font-size: 42px; flex-shrink: 0; }
+  .bubble-text { font-size: 17px; font-weight: 800; color: var(--dk); line-height: 1.4; }
+  .question-card {
+    background: white; border-radius: 24px; padding: 20px;
+    border: 2.5px solid #f0e6d0; margin-bottom: 16px;
+    text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+  }
+  .question-text { font-size: 32px; font-weight: 900; color: var(--dk); }
+  .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
+  .answer-btn {
+    background: white; border: 3px solid #f0e6d0; border-radius: 22px;
+    padding: 20px 12px; font-size: 26px; font-weight: 900; color: var(--dk);
+    cursor: pointer; transition: all 0.15s; text-align: center;
+    box-shadow: 0 4px 0 #e8dcc8; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .answer-btn:hover { border-color: var(--b); background: #EAF6FF; transform: translateY(-2px); box-shadow: 0 6px 0 #b8d0e8; }
+  .answer-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #e8dcc8; }
+  .answer-btn .ans-label { font-size: 13px; font-weight: 700; color: #999; }
+  .hint-btn {
+    margin-top: 12px; background: var(--y); border: none; border-radius: 50px;
+    padding: 12px 24px; font-size: 14px; font-weight: 900; color: var(--dk);
+    cursor: pointer; width: 100%; box-shadow: 0 3px 0 #c9a800;
+  }
+
+  /* SCREEN 6 - CORRECTO */
+  .s6-bg {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 30px 20px;
+    background: linear-gradient(160deg, #4ECB71 0%, #2BAE55 100%);
+    position: relative; overflow: hidden; min-height: 630px;
+  }
+  .correct-burst { font-size: 80px; text-align: center; margin-bottom: 10px; }
+  .correct-title { font-size: 48px; font-weight: 900; color: white; text-align: center; text-shadow: 0 4px 14px rgba(0,0,0,0.2); margin-bottom: 6px; }
+  .correct-sub { font-size: 18px; font-weight: 800; color: rgba(255,255,255,0.9); margin-bottom: 24px; text-align: center; }
+  .reward-card {
+    background: white; border-radius: 28px; padding: 24px 32px;
+    text-align: center; margin-bottom: 24px; width: 100%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2); border: 4px solid var(--y);
+  }
+  .reward-stars { font-size: 44px; letter-spacing: 4px; margin-bottom: 8px; }
+  .reward-xp { font-size: 36px; font-weight: 900; color: var(--dk); }
+  .reward-xp-label { font-size: 14px; font-weight: 700; color: #888; }
+  .reward-badge { background: #9B59B6; border-radius: 50px; padding: 10px 24px; font-size: 14px; font-weight: 900; color: white; display: inline-block; margin-top: 10px; }
+  .confetti-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-size: 28px; opacity: 0.15; pointer-events: none; overflow: hidden; }
+  .btn-next {
+    background: white; border: none; border-radius: 50px;
+    width: 100%; padding: 20px; font-size: 20px; font-weight: 900;
+    color: var(--g); cursor: pointer; box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+    position: relative; z-index: 1;
+  }
+
+  /* SCREEN 7 - PROGRESO */
+  .s7-header {
+    background: linear-gradient(135deg, var(--p), #7D3AC1);
+    padding: 28px 20px 50px; position: relative; overflow: hidden;
+  }
+  .s7-wave { position: absolute; bottom: -2px; left: 0; right: 0; height: 40px; background: var(--cream); border-radius: 40px 40px 0 0; }
+  .s7-title { font-size: 24px; font-weight: 900; color: white; }
+  .s7-sub { font-size: 14px; color: rgba(255,255,255,0.85); font-weight: 700; margin-top: 4px; }
+  .trophy { font-size: 52px; text-align: right; }
+  .s7-top { display: flex; justify-content: space-between; align-items: center; }
+  .s7-content { padding: 12px 16px 24px; flex: 1; }
+  .overall-stars {
+    background: white; border-radius: 24px; padding: 18px 20px;
+    text-align: center; margin-bottom: 14px;
+    border: 2.5px solid #f0e6d0; box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+  }
+  .big-stars { font-size: 40px; letter-spacing: 4px; }
+  .big-stars-label { font-size: 14px; font-weight: 700; color: #888; margin-top: 4px; }
+  .subject-progress-list { display: flex; flex-direction: column; gap: 10px; }
+  .subj-prog-row {
+    background: white; border-radius: 20px; padding: 14px 16px;
+    border: 2px solid #f0e6d0; box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  }
+  .subj-prog-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .subj-icon-sm { font-size: 28px; }
+  .subj-prog-name { font-size: 15px; font-weight: 900; color: var(--dk); flex: 1; }
+  .subj-prog-pct { font-size: 14px; font-weight: 900; }
+  .prog-bar-bg { background: #f0e6d0; border-radius: 50px; height: 12px; }
+  .prog-bar-fill { height: 100%; border-radius: 50px; }
+  .badges-section { margin-top: 14px; }
+  .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+  .badge-item {
+    background: white; border-radius: 16px; padding: 10px 6px;
+    text-align: center; border: 2px solid #f0e6d0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .badge-icon { font-size: 26px; }
+  .badge-name { font-size: 9px; font-weight: 800; color: #888; margin-top: 4px; line-height: 1.2; }
+</style>
+
+<div class="app-shell" id="app">
+
+  <!-- NAV -->
+  <div class="nav-row" id="navRow">
+    <div class="nav-dot active" onclick="goTo(0)">1</div>
+    <div class="nav-dot" onclick="goTo(1)">2</div>
+    <div class="nav-dot" onclick="goTo(2)">3</div>
+    <div class="nav-dot" onclick="goTo(3)">4</div>
+    <div class="nav-dot" onclick="goTo(4)">5</div>
+    <div class="nav-dot" onclick="goTo(5)">6</div>
+    <div class="nav-dot" onclick="goTo(6)">7</div>
+  </div>
+
+  <!-- PANTALLA 1: BIENVENIDA -->
+  <div class="screen active" id="s0">
+    <div class="s1-bg">
+      <div class="s1-bubble" style="width:200px;height:200px;background:#FFD43B;top:-60px;right:-60px;"></div>
+      <div class="s1-bubble" style="width:120px;height:120px;background:#FF5A5F;bottom:-30px;left:-30px;"></div>
+      <div class="s1-bubble" style="width:80px;height:80px;background:#4ECB71;top:60px;left:20px;"></div>
+      <div class="stars-deco" style="top:40px;right:30px;">✨</div>
+      <div class="stars-deco" style="bottom:100px;right:20px;">⭐</div>
+      <div class="stars-deco" style="top:120px;right:50px;">🌟</div>
+      <div class="s1-mascot">🦉</div>
+      <div class="s1-title">¡Hola,<br>Explorador!</div>
+      <div class="s1-sub">Aprende jugando con Búho 🎮</div>
+      <button class="btn-main" onclick="goTo(1)">¡Jugar ahora! 🚀</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: INICIO / HOME -->
+  <div class="screen" id="s1">
+    <div class="s2-header">
+      <div class="s2-top">
+        <div>
+          <div class="s2-greeting">¡Buenos días! 🌤</div>
+          <div class="s2-name">Sofía ⭐</div>
+        </div>
+        <div class="s2-avatar">🦉</div>
+      </div>
+      <div class="s2-xp-bar-wrap"><div class="s2-xp-bar"></div></div>
+      <div class="s2-xp-label">Nivel 5 · 650 / 1000 XP ⚡</div>
+      <div class="s2-wave"></div>
+    </div>
+    <div class="s2-content">
+      <div class="streak-card">
+        <div class="streak-icon">🔥</div>
+        <div>
+          <div class="streak-num">7</div>
+          <div class="streak-lbl">días seguidos</div>
+        </div>
+        <div style="margin-left:auto;font-size:13px;font-weight:800;color:#999;">¡Racha!</div>
+      </div>
+      <div class="section-title">📊 Mi semana</div>
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-num" style="color:#FF5A5F;">24</div>
+          <div class="stat-lbl">🎯 Actividades</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#FFD43B;">18</div>
+          <div class="stat-lbl">⭐ Estrellas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#4ECB71;">92%</div>
+          <div class="stat-lbl">✅ Aciertos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#9B59B6;">5</div>
+          <div class="stat-lbl">🏆 Logros</div>
+        </div>
+      </div>
+      <button class="btn-play-home" onclick="goTo(2)">
+        <span style="font-size:24px;">🎮</span> ¡A estudiar!
+      </button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 3: MATERIAS -->
+  <div class="screen" id="s2">
+    <div class="s3-header">
+      <div class="btn-back" onclick="goTo(1)">←</div>
+      <div class="screen-title">¿Qué aprendemos? 🦉</div>
+    </div>
+    <div class="subjects-grid">
+      <div class="subject-card math" onclick="goTo(3)">
+        <div class="subj-icon">🔢</div>
+        <div class="subj-info">
+          <div class="subj-name">Matemáticas</div>
+          <div class="subj-prog-label">Progreso · 7 / 10 ⚡</div>
+          <div class="subj-prog-bar"><div class="subj-prog-fill" style="width:70%;"></div></div>
+          <div class="subj-stars">⭐⭐⭐⭐☆</div>
+        </div>
+        <div class="subj-arrow">›</div>
+      </div>
+      <div class="subject-card spanish" onclick="goTo(3)">
+        <div class="subj-icon">📚</div>
+        <div class="subj-info">
+          <div class="subj-name">Español</div>
+          <div class="subj-prog-label">Progreso · 5 / 10 ⚡</div>
+          <div class="subj-prog-bar"><div class="subj-prog-fill" style="width:50%;"></div></div>
+          <div class="subj-stars">⭐⭐⭐☆☆</div>
+        </div>
+        <div class="subj-arrow">›</div>
+      </div>
+      <div class="subject-card science" onclick="goTo(3)">
+        <div class="subj-icon">🌱</div>
+        <div class="subj-info">
+          <div class="subj-name">Ciencias</div>
+          <div class="subj-prog-label">Progreso · 3 / 10 ⚡</div>
+          <div class="subj-prog-bar"><div class="subj-prog-fill" style="width:30%;"></div></div>
+          <div class="subj-stars">⭐⭐☆☆☆</div>
+        </div>
+        <div class="subj-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 4: ACTIVIDADES -->
+  <div class="screen" id="s3">
+    <div class="s4-header">
+      <div class="btn-back" onclick="goTo(2)">←</div>
+      <span style="font-size:28px;">🔢</span>
+      <div style="flex:1">
+        <div style="font-size:18px;font-weight:900;color:#2C2C2A;">Matemáticas</div>
+        <span class="subj-badge" style="background:#FF5A5F;">10 actividades</span>
+      </div>
+    </div>
+    <div class="activities-list">
+      <div class="activity-item done" onclick="goTo(4)">
+        <div class="act-num" style="background:#4ECB71;">1</div>
+        <div class="act-info">
+          <div class="act-name">Contar hasta 10</div>
+          <div class="act-type">🎮 Minijuego</div>
+          <div class="act-stars">⭐⭐⭐</div>
+        </div>
+        <div class="act-status">✅</div>
+      </div>
+      <div class="activity-item done" onclick="goTo(4)">
+        <div class="act-num" style="background:#4ECB71;">2</div>
+        <div class="act-info">
+          <div class="act-name">Sumas sencillas</div>
+          <div class="act-type">✏️ Ejercicio</div>
+          <div class="act-stars">⭐⭐⭐</div>
+        </div>
+        <div class="act-status">✅</div>
+      </div>
+      <div class="activity-item" onclick="goTo(4)" style="border-color:#FFD43B;border-width:3px;">
+        <div class="act-num" style="background:#FFD43B;color:#2C2C2A;">3</div>
+        <div class="act-info">
+          <div class="act-name">¿Cuánto es 5 + 3?</div>
+          <div class="act-type">🧠 Quiz</div>
+          <div class="act-xp">+30 XP · ¡Jugar ahora!</div>
+        </div>
+        <div class="act-status">▶️</div>
+      </div>
+      <div class="activity-item" onclick="goTo(4)" style="opacity:0.5;">
+        <div class="act-num" style="background:#ccc;">4</div>
+        <div class="act-info">
+          <div class="act-name">Restas divertidas</div>
+          <div class="act-type">🔒 Bloqueado</div>
+        </div>
+        <div class="act-status">🔒</div>
+      </div>
+      <div class="activity-item" onclick="goTo(4)" style="opacity:0.5;">
+        <div class="act-num" style="background:#ccc;">5</div>
+        <div class="act-info">
+          <div class="act-name">Formas y figuras</div>
+          <div class="act-type">🔒 Bloqueado</div>
+        </div>
+        <div class="act-status">🔒</div>
+      </div>
+      <div style="text-align:center;font-size:13px;font-weight:700;color:#bbb;padding:4px 0;">+ 5 actividades más por desbloquear 🔒</div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 5: ACTIVIDAD EN CURSO -->
+  <div class="screen" id="s4">
+    <div class="s5-header">
+      <div class="btn-back" onclick="goTo(3)">←</div>
+      <div class="progress-steps">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div style="font-size:13px;font-weight:900;color:#FF5A5F;background:#FFE5E6;border-radius:50px;padding:6px 14px;">❤️ 3</div>
+    </div>
+    <div class="s5-content">
+      <div class="speech-bubble">
+        <div class="bubble-mascot">🦉</div>
+        <div class="bubble-text">¿Cuánto es<br><strong>5 + 3</strong>? 🤔</div>
+      </div>
+      <div class="question-card">
+        <div class="question-text">5 + 3 = ?</div>
+      </div>
+      <div class="answers-grid">
+        <div class="answer-btn" onclick="goTo(5)">
+          <span>7</span>
+          <span class="ans-label">A</span>
+        </div>
+        <div class="answer-btn" onclick="goTo(5)">
+          <span>8</span>
+          <span class="ans-label">B</span>
+        </div>
+        <div class="answer-btn" onclick="goTo(5)">
+          <span>9</span>
+          <span class="ans-label">C</span>
+        </div>
+        <div class="answer-btn" onclick="goTo(5)">
+          <span>6</span>
+          <span class="ans-label">D</span>
+        </div>
+      </div>
+      <button class="hint-btn">💡 Pista</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 6: RESPUESTA CORRECTA -->
+  <div class="screen" id="s5">
+    <div class="s6-bg">
+      <div class="confetti-bg">
+        🎊🎉🌟⭐🏆🎯🎊🎉🌟⭐🏆🎊🎉🌟⭐🏆🎯🎊🎉🌟⭐🏆🎊🎉🌟⭐
+      </div>
+      <div class="correct-burst">🎉</div>
+      <div class="correct-title">¡Correcto!</div>
+      <div class="correct-sub">¡Eres increíble, Sofía! 🦉</div>
+      <div class="reward-card">
+        <div class="reward-stars">⭐⭐⭐</div>
+        <div class="reward-xp">+30 XP</div>
+        <div class="reward-xp-label">puntos ganados</div>
+        <div class="reward-badge">🏆 ¡Racha de 3!</div>
+      </div>
+      <button class="btn-next" onclick="goTo(3)">Siguiente actividad →</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 7: PROGRESO -->
+  <div class="screen" id="s6">
+    <div class="s7-header">
+      <div class="s7-top">
+        <div>
+          <div class="s7-title">Mi Progreso 🏆</div>
+          <div class="s7-sub">¡Sigue así, campeona!</div>
+        </div>
+        <div class="trophy">🏆</div>
+      </div>
+      <div class="s7-wave"></div>
+    </div>
+    <div class="s7-content">
+      <div class="overall-stars">
+        <div class="big-stars">⭐⭐⭐⭐☆</div>
+        <div class="big-stars-label">18 de 30 estrellas · Nivel Explorador</div>
+      </div>
+      <div class="section-title">📚 Por materia</div>
+      <div class="subject-progress-list">
+        <div class="subj-prog-row">
+          <div class="subj-prog-top">
+            <div class="subj-icon-sm">🔢</div>
+            <div class="subj-prog-name">Matemáticas</div>
+            <div class="subj-prog-pct" style="color:#FF5A5F;">70%</div>
+          </div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:70%;background:#FF5A5F;"></div></div>
+        </div>
+        <div class="subj-prog-row">
+          <div class="subj-prog-top">
+            <div class="subj-icon-sm">📚</div>
+            <div class="subj-prog-name">Español</div>
+            <div class="subj-prog-pct" style="color:#4A90D9;">50%</div>
+          </div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:50%;background:#4A90D9;"></div></div>
+        </div>
+        <div class="subj-prog-row">
+          <div class="subj-prog-top">
+            <div class="subj-icon-sm">🌱</div>
+            <div class="subj-prog-name">Ciencias</div>
+            <div class="subj-prog-pct" style="color:#4ECB71;">30%</div>
+          </div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:30%;background:#4ECB71;"></div></div>
+        </div>
+      </div>
+      <div class="badges-section">
+        <div class="section-title">🏅 Mis logros</div>
+        <div class="badges-grid">
+          <div class="badge-item"><div class="badge-icon">🔥</div><div class="badge-name">Racha 7 días</div></div>
+          <div class="badge-item"><div class="badge-icon">🧠</div><div class="badge-name">Super listo</div></div>
+          <div class="badge-item"><div class="badge-icon">⚡</div><div class="badge-name">Velocidad</div></div>
+          <div class="badge-item"><div class="badge-icon">💎</div><div class="badge-name">Perfecto</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let cur = 0;
+const screens = document.querySelectorAll('.screen');
+const dots = document.querySelectorAll('.nav-dot');
+function goTo(n) {
+  screens[cur].classList.remove('active');
+  dots[cur].classList.remove('active');
+  cur = n;
+  screens[cur].classList.add('active');
+  dots[cur].classList.add('active');
+}
+</script>
