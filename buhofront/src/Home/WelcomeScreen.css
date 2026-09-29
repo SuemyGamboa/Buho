@@ -418,6 +418,86 @@ body {
   font-size: 1.25rem;
 }
 
+.profile-name-backdrop {
+  display: grid;
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  padding: 20px;
+  place-items: center;
+  background: rgba(17, 38, 59, 0.55);
+  backdrop-filter: blur(5px);
+}
+
+.profile-name-dialog {
+  display: grid;
+  position: relative;
+  width: min(100%, 380px);
+  gap: 13px;
+  padding: 30px;
+  border: 1px solid rgba(37, 89, 139, 0.1);
+  border-radius: 25px;
+  background: #fff;
+  box-shadow: 0 25px 70px rgba(13, 41, 67, 0.25);
+}
+
+.profile-name-dialog > .material-symbols-outlined {
+  color: #4d96ff;
+  font-size: 36px;
+}
+
+.profile-name-dialog h2 {
+  margin: 0;
+  color: #17324f;
+  font: 900 22px 'Plus Jakarta Sans', sans-serif;
+}
+
+.profile-name-dialog label {
+  color: #344e68;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.profile-name-dialog input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e2ebf3;
+  border-radius: 13px;
+  outline: none;
+  color: #193650;
+  font: 500 14px 'Be Vietnam Pro', sans-serif;
+}
+
+.profile-name-dialog input:focus {
+  border-color: #4d96ff;
+  box-shadow: 0 0 0 3px rgba(77, 150, 255, 0.13);
+}
+
+.profile-name-save {
+  min-height: 44px;
+  border: 0;
+  border-radius: 13px;
+  background: #fed33a;
+  box-shadow: 0 4px 0 #d1a800;
+  color: #3d3100;
+  cursor: pointer;
+  font: 900 12px 'Plus Jakarta Sans', sans-serif;
+}
+
+.profile-name-close {
+  position: absolute;
+  top: 11px;
+  right: 13px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: #eff6fc;
+  color: #48647b;
+  cursor: pointer;
+  font-size: 23px;
+}
+
 /* Start button */
 .start-btn-wrapper {
   width: 100%;

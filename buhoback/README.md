@@ -7,6 +7,80 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Zona de Papás y administración de contenido
+
+La app para niños conserva el perfil de demostración Mateo. Solo las cuentas
+de padres con el rol `admin` en `public.user_roles` pueden iniciar sesión en
+`/admin` y cambiar el contenido. Laravel valida las credenciales mediante
+Supabase Auth, guarda el token en la sesión del servidor y comprueba el token
+y el rol en las rutas administrativas.
+
+### Configuración
+
+1. Configura `DB_CONNECTION=pgsql`, los datos del Session Pooler de Supabase y
+   `DB_SSLMODE=require` en `.env`.
+   El usuario del pooler debe incluir el identificador del proyecto
+   (`postgres.<project-ref>`) y `DB_PASSWORD` debe ser la contraseña de la
+   base de datos de Supabase, no la contraseña del usuario de Auth. Las
+   sesiones y la caché locales usan archivos para que no dependan de
+   PostgreSQL.
+2. Configura `SUPABASE_URL` y `SUPABASE_ANON_KEY` en el backend. No uses la
+   clave `service_role` en el navegador.
+3. Ejecuta `php artisan migrate`. Las migraciones crean las tablas de contenido,
+   políticas RLS, el trigger de perfiles, las portadas, catálogos de logros y
+   recompensas y la configuración estructurada de minijuegos; también asignan
+   el rol de administrador al UUID `05d8cad9-0b1b-414a-a2b2-cb6dbf839266`.
+   Si `subjects.image_url`, `activities` y los catálogos `achievements` /
+   `rewards` ya fueron creados en Supabase, las migraciones detectan los
+   objetos existentes y no los recrean. Las migraciones tampoco eliminan esos
+   objetos al revertirse, para preservar el esquema administrado en Supabase.
+4. Ejecuta `php artisan storage:link` para publicar las imágenes de actividad
+   cargadas en `storage/app/public`.
+5. Ejecuta `php artisan db:seed --class=ContentDemoSeeder` para crear la
+   materia de prueba "Matemáticas de prueba" con cuatro actividades activas
+   (memorama, arrastrar y colocar, preguntas y unir parejas) y llenar los
+   catálogos de logros y recompensas. El seeder puede ejecutarse varias veces
+   sin duplicar los registros y desactiva los ejemplos anteriores que ya no
+   forman parte de esta demostración.
+6. Inicia Laravel en `http://127.0.0.1:8000` y Vite desde `buhofront`. El proxy
+   de desarrollo reenvía `/api` y `/storage` a Laravel; cambia
+   `LARAVEL_API_TARGET` si el backend escucha en otra dirección.
+   Después de cambiar `.env`, reinicia `php artisan serve`.
+7. Crea o habilita la cuenta del padre en Supabase Auth. Mateo no necesita una
+   cuenta ni credenciales.
+
+El formulario de acceso también permite registrar una cuenta nueva. El
+registro está abierto: cualquier persona que cree una cuenta recibe el rol
+`admin`. Si Supabase requiere confirmación de correo, el panel indicará que
+debe confirmar su dirección antes de iniciar sesión.
+
+El panel permite ordenar, editar y activar/desactivar materias y actividades.
+Las desactivaciones son lógicas para conservar el progreso asociado. Los
+formularios visuales de memorama, arrastrar y colocar, preguntas de opción
+múltiple y unir parejas generan automáticamente la configuración; el mismo
+contenido estructurado se persiste en `activities.content` y
+`activities.config` (JSONB) para compatibilidad con el cliente existente. Las
+respuestas aceptan texto, números, emojis y URLs de imagen. Los formatos
+anteriores se preservan al editar sus campos comunes. Las portadas se guardan
+en el disco público de Laravel. En producción,
+sirve el frontend y las rutas `/api` bajo el mismo origen para mantener
+protegidas las cookies de sesión y CSRF. En producción HTTPS, configura
+`SESSION_SECURE_COOKIE=true`.
+
+Los catálogos conservan el esquema `achievements(id, name, description,
+icon_url, created_at)` y `rewards(id, name, image_url, type, created_at)`.
+Las actividades guardan `cover_image_url`, `internal_media_url`,
+`achievement_id`, `reward_item_id`, `unlock_after`, `time_limit_seconds` y
+`config` (JSONB); `subjects.image_url` almacena la imagen de cada materia.
+
+El panel incluye puzzles, memorama, arrastrar y colocar, encontrar elementos,
+retos con tiempo, construcción, selección de objetivos, preguntas, organización
+por categorías, parejas y sumas. Se pueden configurar estrellas, monedas,
+insignias, objetos visuales desbloqueables y el número de actividades
+necesarias para desbloquear un reto. La pantalla de Mateo es una demostración:
+su vista previa de progreso se guarda localmente en el navegador y no sustituye
+el progreso autenticado de `player_progress` en producción.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

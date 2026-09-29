@@ -2,8 +2,19 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './WelcomeScreen.css';
 
+const playerNameStorageKey = 'mateo-demo-name';
+
 const WelcomeScreen = () => {
   const [isMascotBouncing, setIsMascotBouncing] = useState(false);
+  const [playerName, setPlayerName] = useState(() => {
+    try {
+      return localStorage.getItem(playerNameStorageKey) || 'Mateo';
+    } catch {
+      return 'Mateo';
+    }
+  });
+  const [nameDraft, setNameDraft] = useState(playerName);
+  const [isEditingName, setIsEditingName] = useState(false);
   const navigate = useNavigate();
 
   const handleMascotClick = () => {
@@ -14,7 +25,7 @@ const WelcomeScreen = () => {
   const handleAudioClick = () => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(
-        '¡Hola Mateo! ¡Bienvenido de nuevo a tu aventura de aprendizaje! ¿Listo para jugar?'
+        `¡Hola ${playerName}! ¡Bienvenido de nuevo a tu aventura de aprendizaje! ¿Listo para jugar?`
       );
       utterance.lang = 'es-ES';
       utterance.pitch = 1.3;
@@ -31,6 +42,19 @@ const WelcomeScreen = () => {
       // 👇 Redirige a la pantalla de materias
       navigate('/materias');
     }, 200);
+  };
+
+  const savePlayerName = (event) => {
+    event.preventDefault();
+    const nextName = nameDraft.trim();
+    if (!nextName) return;
+    setPlayerName(nextName);
+    try {
+      localStorage.setItem(playerNameStorageKey, nextName);
+    } catch {
+      // Keep the updated name for this visit if storage is unavailable.
+    }
+    setIsEditingName(false);
   };
 
   return (
@@ -54,7 +78,7 @@ const WelcomeScreen = () => {
             >
               volume_up
             </span>
-            <span className="audio-label">🔊 ¡Escuchar saludo!</span>
+            <span className="audio-label">¡Escuchar saludo!</span>
           </button>
           <div className="audio-wave">
             <span className="wave-bar wave-bar-1"></span>
@@ -74,7 +98,7 @@ const WelcomeScreen = () => {
             >
               auto_awesome
             </span>
-            <span>NIVEL 3</span>
+            <span>AVENTURERO</span>
           </div>
           <div className="badge badge-points">
             <span
@@ -83,7 +107,7 @@ const WelcomeScreen = () => {
             >
               military_tech
             </span>
-            <span>120 PTS</span>
+            <span>LISTO PARA JUGAR</span>
           </div>
 
           {/* Mascota */}
@@ -102,7 +126,7 @@ const WelcomeScreen = () => {
 
           {/* Saludo */}
           <div className="greeting">
-            <h1 className="greeting-title">¡Hola, Pequeño Explorador!</h1>
+            <h1 className="greeting-title">¡Hola, {playerName}!</h1>
             <p className="greeting-subtitle">
               Aprende jugando y descubre mundos mágicos hoy.
             </p>
@@ -121,11 +145,19 @@ const WelcomeScreen = () => {
                 <span className="profile-status-dot"></span>
               </div>
               <div className="profile-text">
-                <p className="profile-name">Mateo</p>
-                <p className="profile-detail">7 AÑOS • AVENTURERO</p>
+                <p className="profile-name">{playerName}</p>
+                <p className="profile-detail">PERFIL DE DEMOSTRACIÓN</p>
               </div>
             </div>
-            <button className="profile-edit-btn" aria-label="Cambiar perfil">
+            <button
+              className="profile-edit-btn"
+              aria-label="Editar nombre del perfil"
+              onClick={() => {
+                setNameDraft(playerName);
+                setIsEditingName(true);
+              }}
+              type="button"
+            >
               <span className="material-symbols-outlined profile-edit-icon">edit</span>
             </button>
           </div>
@@ -136,34 +168,65 @@ const WelcomeScreen = () => {
               className="start-btn"
               id="btn-start-quest"
               onClick={handleStartClick}
-              onMouseDown={handleStartClick}
-              onTouchStart={handleStartClick}
             >
               <span>¡EMPEZAR A JUGAR!</span>
-              <span className="start-btn-emoji">🚀</span>
+              <span className="material-symbols-outlined start-btn-emoji">rocket_launch</span>
             </button>
           </div>
 
-          {/* Misión del día */}
-          <div className="daily-quest">
-            <span
-              className="material-symbols-outlined daily-quest-icon"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              kid_star
-            </span>
-            <span>Misión de hoy: 3 retos matemáticos listos</span>
-          </div>
+
         </div>
 
         {/* Zona de papás */}
         <div className="parent-gate-wrapper">
-          <button className="parent-gate-btn" id="btn-parent-gate">
+          <button
+            className="parent-gate-btn"
+            id="btn-parent-gate"
+            onClick={() => navigate('/admin')}
+            type="button"
+          >
             <span className="material-symbols-outlined parent-gate-icon">lock</span>
             <span>Zona de Papás</span>
           </button>
         </div>
       </div>
+      {isEditingName && (
+        <div
+          className="profile-name-backdrop"
+          onClick={() => setIsEditingName(false)}
+          role="presentation"
+        >
+          <form
+            aria-labelledby="profile-name-title"
+            aria-modal="true"
+            className="profile-name-dialog"
+            onClick={(event) => event.stopPropagation()}
+            onSubmit={savePlayerName}
+            role="dialog"
+          >
+            <button
+              aria-label="Cerrar"
+              className="profile-name-close"
+              onClick={() => setIsEditingName(false)}
+              type="button"
+            >
+              ×
+            </button>
+            <span className="material-symbols-outlined" aria-hidden="true">face_6</span>
+            <h2 id="profile-name-title">¿Cómo te llamas?</h2>
+            <label htmlFor="profile-name-input">Nombre del jugador</label>
+            <input
+              autoFocus
+              id="profile-name-input"
+              maxLength="40"
+              onChange={(event) => setNameDraft(event.target.value)}
+              required
+              value={nameDraft}
+            />
+            <button className="profile-name-save" type="submit">Guardar nombre</button>
+          </form>
+        </div>
+      )}
     </main>
   );
 };
