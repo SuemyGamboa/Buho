@@ -36,12 +36,11 @@ y el rol en las rutas administrativas.
    objetos al revertirse, para preservar el esquema administrado en Supabase.
 4. Ejecuta `php artisan storage:link` para publicar las imágenes de actividad
    cargadas en `storage/app/public`.
-5. Ejecuta `php artisan db:seed --class=ContentDemoSeeder` para crear la
-   materia de prueba "Matemáticas de prueba" con cuatro actividades activas
-   (memorama, arrastrar y colocar, preguntas y unir parejas) y llenar los
-   catálogos de logros y recompensas. El seeder puede ejecutarse varias veces
-   sin duplicar los registros y desactiva los ejemplos anteriores que ya no
-   forman parte de esta demostración.
+5. Ejecuta `php artisan db:seed --class=ContentDemoSeeder` para crear o actualizar
+   las materias de demostración Matemáticas de prueba, Español e Inglés, con cinco
+   actividades sencillas activas por materia. Los retos usan memorama, arrastrar
+   y colocar, preguntas y unir parejas. El seeder puede ejecutarse varias veces
+   sin duplicar los registros y llena los catálogos de logros y recompensas.
 6. Inicia Laravel en `http://127.0.0.1:8000` y Vite desde `buhofront`. El proxy
    de desarrollo reenvía `/api` y `/storage` a Laravel; cambia
    `LARAVEL_API_TARGET` si el backend escucha en otra dirección.

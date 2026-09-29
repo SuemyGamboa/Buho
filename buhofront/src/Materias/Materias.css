@@ -24,6 +24,26 @@
   --on-surface-variant: #414753;
 }
 
+.player-result-actions {
+  display: grid;
+  width: 100%;
+  gap: 9px;
+}
+
+.player-game-secondary-button {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #dceafa;
+  border-radius: 99px;
+  background: #fff;
+  color: #48647b;
+  cursor: pointer;
+  font: 800 11px 'Plus Jakarta Sans', sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -942,6 +962,42 @@ body {
   font-weight: 800;
 }
 
+.player-missions-play-all {
+  display: inline-flex;
+  min-height: 42px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 99px;
+  background: #4ecb71;
+  box-shadow: 0 4px 0 #32a350;
+  color: #fff;
+  cursor: pointer;
+  font: 800 10px 'Plus Jakarta Sans', sans-serif;
+}
+
+.player-missions-play-all:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.player-missions-play-all > .material-symbols-outlined {
+  font-size: 17px;
+}
+
+.player-missions-play-count {
+  display: grid;
+  min-width: 21px;
+  height: 21px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 9px;
+}
+
 .player-tab-list {
   display: grid;
   gap: 10px;
@@ -1093,6 +1149,164 @@ body {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+.player-mascot-card {
+  display: grid;
+  position: relative;
+  align-items: center;
+  grid-template-columns: minmax(220px, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(16px, 4vw, 38px);
+  min-height: 310px;
+  padding: clamp(18px, 4vw, 34px);
+  overflow: hidden;
+  border: 1px solid #dceefa;
+  border-radius: 34px;
+  background:
+    radial-gradient(ellipse at 22% 54%, rgba(255, 255, 255, 0.95) 0 23%, transparent 50%),
+    linear-gradient(115deg, #e5f8ff 0%, #f4fbff 55%, #fff6d6 100%);
+  box-shadow: 0 12px 30px rgba(77, 150, 255, 0.12);
+}
+
+.player-mascot-avatar {
+  display: grid;
+  position: relative;
+  width: min(100%, 300px);
+  aspect-ratio: 1;
+  justify-self: center;
+  place-items: center;
+  overflow: hidden;
+  border: 8px solid #fff;
+  border-radius: 46% 54% 48% 52% / 51% 44% 56% 49%;
+  background-color: #d5f3f2;
+  background-image: url('/buhoPredeterminado.jpg');
+  background-repeat: no-repeat;
+  background-position: 50% 22%;
+  background-size: 420% auto;
+  box-shadow:
+    0 14px 30px rgba(0, 93, 184, 0.2),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.75);
+  animation: mascot-float 3s ease-in-out infinite;
+}
+
+.player-mascot-sparkle {
+  position: absolute;
+  top: 11%;
+  right: 11%;
+  color: #e9ad00;
+  font-size: 30px;
+  font-variation-settings: 'FILL' 1;
+  filter: drop-shadow(0 2px 3px #fff);
+}
+
+.player-mascot-chat {
+  display: grid;
+  position: relative;
+  min-width: 0;
+  gap: 11px;
+  padding: 23px 24px;
+  border: 2px solid #e1eff8;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(34, 89, 134, 0.1);
+}
+
+.player-mascot-chat::before {
+  position: absolute;
+  top: 50%;
+  left: -13px;
+  width: 22px;
+  height: 22px;
+  border-bottom: 2px solid #e1eff8;
+  border-left: 2px solid #e1eff8;
+  background: #fff;
+  content: '';
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.player-mascot-eyebrow {
+  color: #2874a0;
+  font: 900 11px 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.player-mascot-chat p {
+  margin: 0;
+  color: #17324f;
+  font: 800 clamp(16px, 2vw, 21px)/1.4 'Plus Jakarta Sans', sans-serif;
+}
+
+.player-mascot-pending-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  color: #58738a;
+  font: 600 12px 'Be Vietnam Pro', sans-serif;
+  list-style: none;
+}
+
+.player-mascot-pending-list li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-mascot-pending-list li::before {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #fed33a;
+  content: '';
+}
+
+.player-mascot-start {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  gap: 9px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 99px;
+  background: #4ecb71;
+  box-shadow: 0 5px 0 #32a350;
+  color: #fff;
+  cursor: pointer;
+  font: 900 12px 'Plus Jakarta Sans', sans-serif;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.player-mascot-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #32a350;
+}
+
+.player-mascot-start:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #32a350;
+}
+
+.player-mascot-start .material-symbols-outlined {
+  font-size: 19px;
+}
+
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-mascot-avatar {
+    animation: none;
+  }
 }
 
 /* ============ BOTONES DE VOZ ============ */
@@ -1577,6 +1791,60 @@ body {
 }
 
 @media (max-width: 520px) {
+  .player-mascot-card {
+    grid-template-columns: 1fr;
+    gap: 0;
+    min-height: auto;
+    padding: 14px 14px 18px;
+  }
+
+  .player-mascot-avatar {
+    z-index: 1;
+    width: min(72vw, 260px);
+    margin-bottom: -14px;
+    border-width: 7px;
+  }
+
+  .player-mascot-chat {
+    z-index: 2;
+    gap: 9px;
+    padding: 19px 18px 16px;
+    border-radius: 23px;
+  }
+
+  .player-mascot-chat::before {
+    top: -10px;
+    left: 50%;
+    border-top: 2px solid #e1eff8;
+    border-right: 2px solid #e1eff8;
+    border-bottom: 0;
+    border-left: 0;
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .player-mascot-chat p {
+    font-size: 17px;
+  }
+
+  .player-mascot-start {
+    justify-self: stretch;
+  }
+}
+
+@media (min-width: 521px) and (max-width: 760px) {
+  .player-mascot-card {
+    grid-template-columns: minmax(170px, 0.85fr) minmax(0, 1.15fr);
+    min-height: 260px;
+  }
+
+  .player-mascot-avatar {
+    width: min(100%, 230px);
+  }
+
+  .player-mascot-chat {
+    padding: 18px;
+  }
+
   .player-activity-backdrop {
     padding: 10px;
   }

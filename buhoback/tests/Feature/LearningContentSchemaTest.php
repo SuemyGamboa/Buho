@@ -96,7 +96,7 @@ class LearningContentSchemaTest extends TestCase
         );
     }
 
-    public function test_demo_seeder_creates_four_repeatable_math_activities_for_each_game_type(): void
+    public function test_demo_seeder_creates_three_repeatable_subjects_with_five_simple_activities_each(): void
     {
         $this->seed(ContentDemoSeeder::class);
         $this->seed(ContentDemoSeeder::class);
@@ -108,17 +108,34 @@ class LearningContentSchemaTest extends TestCase
         $this->assertNotNull($subject);
         $this->assertNull($subject->image_url);
         $this->assertSame(
-            4,
+            5,
             DB::table('activities')
                 ->where('subject_id', $subject->id)
                 ->where('is_active', true)
                 ->count(),
         );
+        $this->assertSame(3, DB::table('subjects')->where('is_active', true)->count());
+        $this->assertSame(
+            15,
+            DB::table('activities')->where('is_active', true)->count(),
+        );
+        foreach (['Español', 'Inglés'] as $subjectName) {
+            $this->assertSame(
+                5,
+                DB::table('activities')
+                    ->join('subjects', 'activities.subject_id', '=', 'subjects.id')
+                    ->whereRaw('LOWER(subjects.name) = ?', [mb_strtolower($subjectName)])
+                    ->where('activities.is_active', true)
+                    ->count(),
+                "{$subjectName} must have five active demo activities.",
+            );
+        }
         $this->assertEqualsCanonicalizing(
             ['memorama', 'drag_drop', 'quiz', 'matching'],
             DB::table('activities')
                 ->where('subject_id', $subject->id)
                 ->where('is_active', true)
+                ->distinct()
                 ->pluck('game_type')
                 ->all(),
         );
@@ -127,7 +144,7 @@ class LearningContentSchemaTest extends TestCase
             true,
         );
         $quizContent = json_decode(
-            DB::table('activities')->where('name', 'Elige la respuesta')->value('content'),
+            DB::table('activities')->where('name', 'Cuenta las manzanas')->value('content'),
             true,
         );
         $this->assertSame('Uno', $memoramaContent['pairs'][0]['content_b']);

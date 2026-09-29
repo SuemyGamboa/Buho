@@ -66,6 +66,16 @@ const contentIsImage = (value) => (
   typeof value === 'string' && (/^https?:\/\//i.test(value) || value.startsWith('/storage/'))
 );
 
+const getMissionOrder = (seed, activity) => {
+  const key = `${seed}:${activity.subjectId}:${activity.id}`;
+  let hash = 2166136261;
+  for (let index = 0; index < key.length; index += 1) {
+    hash ^= key.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+};
+
 function GameContent({ value, className = '' }) {
   if (contentIsImage(value)) {
     return <img alt="Contenido de actividad" className={`player-game-image ${className}`} src={value} />;
@@ -75,13 +85,15 @@ function GameContent({ value, className = '' }) {
 }
 
 const Materias = () => {
-  const [activeTab, setActiveTab] = useState('materias');
+  const [activeTab, setActiveTab] = useState('inicio');
+  const navigate = useNavigate();
   const [contentError, setContentError] = useState('');
   const [isLoadingContent, setIsLoadingContent] = useState(true);
   const [expandedSubjectId, setExpandedSubjectId] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [gameSession, setGameSession] = useState(makeGameSession);
   const [activityResult, setActivityResult] = useState(null);
+  const [randomMissionQueue, setRandomMissionQueue] = useState(null);
   const memoryTimerRef = useRef(null);
   const gameTimerRef = useRef(null);
   const gameSessionRef = useRef(gameSession);
@@ -101,8 +113,7 @@ const Materias = () => {
       return [];
     }
   });
-  const navigate = useNavigate();
-
+  const [missionShuffleSeed, setMissionShuffleSeed] = useState(0);
   const speakTitle = (text, btn) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -120,6 +131,7 @@ const Materias = () => {
   const closeActivity = () => {
     window.clearTimeout(memoryTimerRef.current);
     window.clearInterval(gameTimerRef.current);
+    setRandomMissionQueue(null);
     setSelectedActivity(null);
     setActivityResult(null);
   };
@@ -165,15 +177,13 @@ const Materias = () => {
     }))),
     [materias],
   );
-  const availableActivities = allActivities.filter(
-    (activity) => {
-      if (completedActivityIds.includes(activity.id)) return false;
-      const completedInSubject = allActivities.filter((item) => (
-        item.subjectId === activity.subjectId && completedActivityIds.includes(item.id)
-      )).length;
-      return activity.unlock_after <= completedInSubject;
-    },
-  );
+  const missionActivities = useMemo(() => {
+    return allActivities
+      .filter((activity) => !completedActivityIds.includes(activity.id))
+      .sort((left, right) => (
+        getMissionOrder(missionShuffleSeed, left) - getMissionOrder(missionShuffleSeed, right)
+      ));
+  }, [allActivities, completedActivityIds, missionShuffleSeed]);
   const getActivityDialogData = (activity) => ({
     ...activity,
     gameTypeLabel: gameTypeLabels[activity.game_type] || 'Minijuego',
@@ -192,6 +202,35 @@ const Materias = () => {
     const timeLimit = Number(activityData.time_limit_seconds || content.time_limit || 0);
     setRemainingSeconds(timeLimit > 0 ? timeLimit : null);
     setActivityResult(null);
+  };
+  const startRandomMissionRun = () => {
+    const shuffledMissions = [...missionActivities];
+    for (let index = shuffledMissions.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffledMissions[index], shuffledMissions[randomIndex]] = [
+        shuffledMissions[randomIndex],
+        shuffledMissions[index],
+      ];
+    }
+
+    if (shuffledMissions.length === 0) return;
+    setRandomMissionQueue(shuffledMissions.slice(1));
+    startActivity(shuffledMissions[0]);
+  };
+  const startNextRandomMission = () => {
+    if (!randomMissionQueue?.length) {
+      setRandomMissionQueue(null);
+      closeActivity();
+      return;
+    }
+
+    const [nextMission, ...remainingMissions] = randomMissionQueue;
+    setRandomMissionQueue(remainingMissions);
+    startActivity(nextMission);
+  };
+  const startSingleActivity = (activity) => {
+    setRandomMissionQueue(null);
+    startActivity(activity);
   };
   const finishActivity = useCallback((success, summary) => {
     window.clearTimeout(memoryTimerRef.current);
@@ -369,6 +408,7 @@ const Materias = () => {
       })
       .then((data) => {
         if (cancelled) return;
+        setMissionShuffleSeed(Math.random());
         setMaterias(data.map((subject) => {
           const color = subject.color || '#4d96ff';
           const image = subject.activities
@@ -417,8 +457,8 @@ const Materias = () => {
 
   const tabs = [
     { id: 'inicio', label: 'Inicio', icon: 'home' },
-    { id: 'materias', label: 'Materias', icon: 'category' },
     { id: 'misiones', label: 'Misiones', icon: 'flag_circle' },
+    { id: 'materias', label: 'Materias', icon: 'category' },
     { id: 'mi-album', label: 'Mi Álbum', icon: 'stars' },
   ];
 
@@ -450,10 +490,10 @@ const Materias = () => {
               <span className="stat-value">{playerProgress.coins}</span>
             </div>
             <button
-              aria-label={`Volver al perfil de ${playerName}`}
+              aria-label="Volver al perfil de bienvenida"
               className="home-profile home-profile-button"
               onClick={() => navigate('/')}
-              title="Volver al inicio del perfil"
+              title="Volver a la pantalla de bienvenida"
               type="button"
             >
               <span className="material-symbols-outlined" aria-hidden="true">face_6</span>
@@ -473,7 +513,7 @@ const Materias = () => {
               </h1>
               <p className="greeting-info">
                 <span className="pulse-dot"></span>
-                Tienes <strong>{availableActivities.length} retos</strong> disponibles
+                Tienes <strong>{missionActivities.length} retos</strong> disponibles
               </p>
             </div>
             <button
@@ -491,8 +531,53 @@ const Materias = () => {
             </button>
           </section>
 
+          {activeTab === 'inicio' && (
+            <section className="player-mascot-card" aria-label="Mascota de bienvenida">
+              <div
+                aria-label="Búho, tu compañero de aprendizaje"
+                className="player-mascot-avatar"
+                role="img"
+              >
+                <span className="material-symbols-outlined player-mascot-sparkle" aria-hidden="true">
+                  auto_awesome
+                </span>
+              </div>
+              <div className="player-mascot-chat">
+                <span className="player-mascot-eyebrow">¡Tu compañero de aventuras!</span>
+                <p>
+                  {missionActivities.length
+                    ? `¡Hola ${playerName}! Tienes ${missionActivities.length} ${missionActivities.length === 1 ? 'reto pendiente' : 'retos pendientes'} para jugar.`
+                    : `¡Muy bien, ${playerName}! Ya completaste todos los retos disponibles.`}
+                </p>
+                {missionActivities.length > 0 && (
+                  <ul className="player-mascot-pending-list">
+                    {missionActivities.slice(0, 2).map((activity) => (
+                      <li key={activity.id}>{activity.name}</li>
+                    ))}
+                    {missionActivities.length > 2 && (
+                      <li>y {missionActivities.length - 2} más</li>
+                    )}
+                  </ul>
+                )}
+                <button
+                  className="player-mascot-start"
+                  onClick={() => {
+                    setActiveTab('misiones');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  type="button"
+                >
+                  {missionActivities.length ? '¡Empezar a jugar!' : 'Ver misiones'}
+                  <span className="material-symbols-outlined" aria-hidden="true">
+                    arrow_forward
+                  </span>
+                </button>
+              </div>
+            </section>
+          )}
+
           {/* Resumen del perfil del jugador */}
-          <section className="mission-card">
+          {activeTab === 'inicio' && <section className="mission-card">
             <div className="mission-header">
               <div className="mission-title-group">
                 <div className="mission-icon-wrapper">
@@ -536,7 +621,7 @@ const Materias = () => {
               </div>
               <div>
                 <span className="material-symbols-outlined">sports_esports</span>
-                <strong>{availableActivities.length}</strong>
+                <strong>{missionActivities.length}</strong>
                 <small>por jugar</small>
               </div>
               <div>
@@ -545,7 +630,7 @@ const Materias = () => {
                 <small>insignias</small>
               </div>
             </div>
-          </section>
+          </section>}
 
           {/* Mis Materias */}
           {activeTab === 'materias' && <section className="materias-section">
@@ -712,7 +797,7 @@ const Materias = () => {
                           <button
                             className="player-activity-start"
                             disabled={locked}
-                            onClick={() => startActivity({
+                            onClick={() => startSingleActivity({
                               ...activity,
                               subjectName: m.name,
                             })}
@@ -746,11 +831,20 @@ const Materias = () => {
                   <span className="materia-badge materia-badge-primary">Misiones activas</span>
                   <h2 id="missions-title">Retos para jugar</h2>
                 </div>
-                <span className="player-tab-count">{availableActivities.length} pendientes</span>
+                <button
+                  className="player-missions-play-all"
+                  disabled={isLoadingContent || missionActivities.length === 0}
+                  onClick={startRandomMissionRun}
+                  type="button"
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">shuffle</span>
+                  Jugar todos al azar
+                  <span className="player-missions-play-count">{missionActivities.length}</span>
+                </button>
               </div>
               {contentError && <p className="materias-load-error" role="alert">{contentError}</p>}
               {isLoadingContent && <p className="materias-empty-state">Cargando misiones…</p>}
-              {!isLoadingContent && availableActivities.length === 0 && (
+              {!isLoadingContent && missionActivities.length === 0 && (
                 <p className="materias-empty-state">
                   {allActivities.length
                     ? '¡Completaste todos los retos disponibles! Revisa tu álbum de progreso.'
@@ -758,7 +852,7 @@ const Materias = () => {
                 </p>
               )}
               <div className="player-tab-list">
-                {availableActivities.map((activity) => (
+                {missionActivities.map((activity) => (
                   <article className="player-tab-card" key={activity.id}>
                     <span className="player-tab-card-icon material-symbols-outlined">sports_esports</span>
                     <div className="player-tab-card-copy">
@@ -768,7 +862,7 @@ const Materias = () => {
                     </div>
                     <button
                       className="player-activity-start"
-                      onClick={() => startActivity(activity)}
+                      onClick={() => startSingleActivity(activity)}
                       type="button"
                     >Jugar</button>
                   </article>
@@ -839,12 +933,8 @@ const Materias = () => {
               key={t.id}
               className={`nav-item ${activeTab === t.id ? 'nav-item-active' : ''}`}
               onClick={() => {
-                if (t.id === 'inicio') {
-                  navigate('/');
-                } else {
-                  setActiveTab(t.id);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+                setActiveTab(t.id);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               type="button"
             >
@@ -1089,17 +1179,38 @@ const Materias = () => {
                 {activityResult.success ? (
                   <button
                     className="player-game-primary-button"
-                    onClick={() => {
-                      closeActivity();
-                    }}
+                    onClick={randomMissionQueue
+                      ? startNextRandomMission
+                      : closeActivity}
                     type="button"
-                  >Volver a las actividades <span className="material-symbols-outlined">arrow_forward</span></button>
+                  >
+                    {randomMissionQueue
+                      ? randomMissionQueue.length
+                        ? `Siguiente reto aleatorio (${randomMissionQueue.length} restantes)`
+                        : 'Terminar ronda aleatoria'
+                      : 'Volver a las actividades'}
+                    <span className="material-symbols-outlined">
+                      {randomMissionQueue?.length ? 'shuffle' : 'arrow_forward'}
+                    </span>
+                  </button>
                 ) : (
-                  <button
-                    className="player-game-primary-button"
-                    onClick={() => startActivity(selectedActivity)}
-                    type="button"
-                  >Intentar de nuevo <span className="material-symbols-outlined">replay</span></button>
+                  <div className="player-result-actions">
+                    <button
+                      className="player-game-primary-button"
+                      onClick={() => startActivity(selectedActivity)}
+                      type="button"
+                    >Intentar de nuevo <span className="material-symbols-outlined">replay</span></button>
+                    {randomMissionQueue?.length > 0 && (
+                      <button
+                        className="player-game-secondary-button"
+                        onClick={startNextRandomMission}
+                        type="button"
+                      >
+                        Saltar este reto
+                        <span className="material-symbols-outlined">skip_next</span>
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             )}
