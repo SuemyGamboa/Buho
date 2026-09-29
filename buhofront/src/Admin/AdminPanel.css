@@ -193,6 +193,16 @@
   color: #4d96ff;
 }
 
+.admin-plan-checkout-note {
+  margin: -5px 0 0;
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: #eff7ff;
+  color: #55708a;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .admin-alert {
   margin: 18px 0;
   padding: 12px 15px;
@@ -305,6 +315,67 @@
   background: #fff4c6;
   font-size: 42px;
   transform: rotate(8deg);
+}
+
+.admin-billing-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 16px;
+  padding: 22px 26px;
+  border: 1px solid #dceafa;
+  border-radius: 20px;
+  background: linear-gradient(110deg, #fff, #f2f8ff);
+  box-shadow: 0 8px 24px rgba(37, 83, 124, 0.06);
+}
+
+.admin-billing-copy {
+  display: grid;
+  gap: 5px;
+}
+
+.admin-billing-copy h2 {
+  margin: 0;
+  color: #17324f;
+  font: 900 20px 'Plus Jakarta Sans', sans-serif;
+}
+
+.admin-billing-copy p {
+  margin: 0;
+  color: #647b90;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.admin-billing-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: end;
+  gap: 10px;
+}
+
+.admin-billing-actions label {
+  display: grid;
+  gap: 5px;
+  color: #506980;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.admin-billing-actions select {
+  min-width: 116px;
+  padding: 11px 12px;
+  border: 1px solid #dce8f1;
+  border-radius: 12px;
+  background: #fff;
+  color: #193650;
+  font: 700 12px 'Be Vietnam Pro', sans-serif;
+}
+
+.admin-billing-actions .admin-primary-button {
+  min-height: 42px;
+  padding: 10px 14px;
 }
 
 .admin-dashboard-stats {
@@ -1023,6 +1094,20 @@
   .admin-welcome {
     min-height: 0;
     padding: 24px 19px;
+  }
+
+  .admin-billing-card,
+  .admin-billing-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-billing-card {
+    padding: 18px;
+  }
+
+  .admin-billing-actions select {
+    width: 100%;
   }
 
   .admin-welcome-icon {

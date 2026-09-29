@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Client\ConnectionException;
+use App\Services\SupabaseProfileService;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminAuthController extends Controller
@@ -20,7 +22,20 @@ class AdminAuthController extends Controller
             ->header('Cache-Control', 'no-store, private');
     }
 
-    public function login(Request $request): Response
+    public function session(Request $request, SupabaseProfileService $profiles): Response
+    {
+        try {
+            $profile = $profiles->find($request->session()->get('supabase_user_id'));
+        } catch (ConnectionException) {
+            return response()->json(['message' => 'No fue posible consultar el plan en Supabase.'], 503);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 503);
+        }
+
+        return response()->json(['authenticated' => true, 'billing' => $this->billingSummary($profile)]);
+    }
+
+    public function login(Request $request, SupabaseProfileService $profiles): Response
     {
         $credentials = $request->validate([
             'email' => ['required', 'email', 'max:255'],
@@ -70,6 +85,14 @@ class AdminAuthController extends Controller
             return response()->json(['message' => 'Esta cuenta no tiene acceso a la zona de administración.'], 403);
         }
 
+        try {
+            $profile = $profiles->find($userId);
+        } catch (ConnectionException) {
+            return response()->json(['message' => 'No fue posible consultar el plan en Supabase.'], 503);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 503);
+        }
+
         $request->session()->regenerate();
         $request->session()->put([
             'supabase_access_token' => $accessToken,
@@ -78,16 +101,19 @@ class AdminAuthController extends Controller
 
         return response()->json([
             'user' => ['id' => $userId],
+            'billing' => $this->billingSummary($profile),
             'csrf_token' => $request->session()->token(),
         ]);
     }
 
-    public function register(Request $request): Response
+    public function register(Request $request, SupabaseProfileService $profiles): Response
     {
         $credentials = $request->validate([
             'email' => ['required', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'max:1024', 'confirmed'],
+            'plan' => ['sometimes', 'in:free,monthly,yearly'],
         ]);
+        $plan = $credentials['plan'] ?? 'free';
         $supabaseUrl = rtrim((string) config('services.supabase.url'), '/');
         $anonKey = config('services.supabase.anon_key');
 
@@ -157,6 +183,16 @@ class AdminAuthController extends Controller
             ], 503);
         }
 
+        if ($plan !== 'free') {
+            try {
+                $profiles->update($userId, ['requested_plan' => $plan]);
+            } catch (ConnectionException) {
+                return response()->json(['message' => 'La cuenta se creó, pero no se pudo guardar el plan solicitado en Supabase.'], 503);
+            } catch (RuntimeException $exception) {
+                return response()->json(['message' => 'La cuenta se creó, pero '.$exception->getMessage()], 503);
+            }
+        }
+
         if (is_string($accessToken) && $accessToken !== '') {
             $request->session()->regenerate();
             $request->session()->put([
@@ -167,6 +203,7 @@ class AdminAuthController extends Controller
             return response()->json([
                 'authenticated' => true,
                 'user' => ['id' => $userId],
+                'checkout_plan' => $plan === 'free' ? null : $plan,
                 'csrf_token' => $request->session()->token(),
             ], 201);
         }
@@ -174,6 +211,7 @@ class AdminAuthController extends Controller
         return response()->json([
             'authenticated' => false,
             'message' => 'La cuenta se creó y ya tiene acceso de administrador. Confirma tu correo desde el mensaje de Supabase y después inicia sesión.',
+            'checkout_plan' => $plan === 'free' ? null : $plan,
             'csrf_token' => $request->session()->token(),
         ], 201);
     }
@@ -190,5 +228,24 @@ class AdminAuthController extends Controller
             'message' => 'Sesión cerrada.',
             'csrf_token' => $request->session()->token(),
         ]);
+    }
+
+    private function billingSummary(array $profile): array
+    {
+        $plan = $profile['plan'] ?? 'free';
+        $status = $profile['subscription_status'] ?? 'active';
+
+        return [
+            'plan' => $plan,
+            'subscription_status' => $status,
+            'current_period_end' => $profile['current_period_end'] ?? null,
+            'trial_ends_at' => $profile['trial_ends_at'] ?? null,
+            'requested_plan' => $profile['requested_plan'] ?? null,
+            'can_manage_subscription' => is_string($profile['stripe_customer_id'] ?? null)
+                && is_string($profile['stripe_subscription_id'] ?? null)
+                && in_array($status, ['active', 'trialing', 'past_due', 'incomplete', 'unpaid', 'paused'], true),
+            'read_only' => ! in_array($plan, ['monthly', 'yearly'], true)
+                || ! in_array($status, ['active', 'trialing'], true),
+        ];
     }
 }

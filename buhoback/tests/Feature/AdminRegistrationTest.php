@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -59,5 +61,46 @@ class AdminRegistrationTest extends TestCase
                 'message',
                 'Supabase rechazó el registro: Password should be at least 12 characters',
             );
+    }
+
+    public function test_paid_plan_selection_is_saved_for_checkout_after_email_confirmation(): void
+    {
+        $userId = '05d8cad9-0b1b-414a-a2b2-cb6dbf839266';
+        config([
+            'services.supabase.url' => 'https://project.supabase.co',
+            'services.supabase.anon_key' => 'valid-test-key',
+            'services.supabase.service_role_key' => 'test-service-role-key',
+        ]);
+
+        Http::fake([
+            'project.supabase.co/auth/v1/signup' => Http::response([
+                'user' => [
+                    'id' => $userId,
+                    'identities' => [['id' => $userId]],
+                ],
+            ], 200),
+            'project.supabase.co/rest/v1/profiles*' => Http::response([], 204),
+        ]);
+
+        $roleQuery = \Mockery::mock(Builder::class);
+        $roleQuery->shouldReceive('insertOrIgnore')->once()->andReturn(1);
+        DB::shouldReceive('table')
+            ->with('user_roles')
+            ->andReturn($roleQuery)
+            ->once();
+
+        $this->postJson('/api/admin/register', [
+            'email' => 'parent@example.com',
+            'password' => 'valid-password-123',
+            'password_confirmation' => 'valid-password-123',
+            'plan' => 'yearly',
+        ])->assertCreated()
+            ->assertJsonPath('authenticated', false)
+            ->assertJsonPath('checkout_plan', 'yearly');
+
+        Http::assertSent(fn ($request) => $request->method() === 'PATCH'
+            && str_contains($request->url(), '/rest/v1/profiles')
+            && $request['requested_plan'] === 'yearly'
+            && $request->hasHeader('Authorization', 'Bearer test-service-role-key'));
     }
 }

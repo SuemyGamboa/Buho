@@ -14,6 +14,15 @@ class LearningContentSchemaTest extends TestCase
 
     public function test_learning_content_supports_subject_artwork_and_activity_rewards_and_unlocks(): void
     {
+        $this->assertTrue(Schema::hasColumns('profiles', [
+            'plan',
+            'subscription_status',
+            'stripe_customer_id',
+            'stripe_subscription_id',
+            'current_period_end',
+            'trial_ends_at',
+            'requested_plan',
+        ]));
         $this->assertTrue(Schema::hasColumn('subjects', 'image_url'));
         $this->assertTrue(Schema::hasColumns('activities', [
             'badge_name',

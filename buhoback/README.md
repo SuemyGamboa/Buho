@@ -24,14 +24,18 @@ y el rol en las rutas administrativas.
    base de datos de Supabase, no la contraseña del usuario de Auth. Las
    sesiones y la caché locales usan archivos para que no dependan de
    PostgreSQL.
-2. Configura `SUPABASE_URL` y `SUPABASE_ANON_KEY` en el backend. No uses la
-   clave `service_role` en el navegador.
+2. Configura `SUPABASE_URL`, `SUPABASE_ANON_KEY` y
+   `SUPABASE_SERVICE_ROLE_KEY` en Laravel. `SUPABASE_SERVICE_ROLE_KEY` puede
+   ser la clave legacy `service_role` o una clave nueva `sb_secret_`; esta
+   última se envía únicamente en el header `apikey` (no es un JWT y no debe
+   enviarse como `Authorization: Bearer`). La clave solo se usa en Laravel;
+   nunca la incluyas en el frontend.
 3. Ejecuta `php artisan migrate`. Las migraciones crean las tablas de contenido,
    políticas RLS, el trigger de perfiles, las portadas, catálogos de logros y
    recompensas y la configuración estructurada de minijuegos; también asignan
    el rol de administrador al UUID `05d8cad9-0b1b-414a-a2b2-cb6dbf839266`.
-   Si `subjects.image_url`, `activities` y los catálogos `achievements` /
-   `rewards` ya fueron creados en Supabase, las migraciones detectan los
+   Si `subjects.image_url`, `activities`, los catálogos `achievements` /
+   `rewards` o las columnas de facturación ya existen en Supabase, las migraciones detectan los
    objetos existentes y no los recrean. Las migraciones tampoco eliminan esos
    objetos al revertirse, para preservar el esquema administrado en Supabase.
 4. Ejecuta `php artisan storage:link` para publicar las imágenes de actividad
@@ -45,13 +49,37 @@ y el rol en las rutas administrativas.
    de desarrollo reenvía `/api` y `/storage` a Laravel; cambia
    `LARAVEL_API_TARGET` si el backend escucha en otra dirección.
    Después de cambiar `.env`, reinicia `php artisan serve`.
-7. Crea o habilita la cuenta del padre en Supabase Auth. Mateo no necesita una
-   cuenta ni credenciales.
+7. En Stripe crea precios recurrentes mensuales y anuales y configura
+   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_MONTHLY_PRICE_ID` y
+   `STRIPE_YEARLY_PRICE_ID` en `.env`. Define `APP_FRONTEND_URL` con el origen
+   del frontend y registra el webhook `POST /stripe/webhook` (excluido de CSRF,
+   protegido mediante la firma de Stripe) para los eventos
+   `checkout.session.completed`, `customer.subscription.created`,
+   `customer.subscription.updated` y `customer.subscription.deleted`.
+   El Checkout no se inicia si falta alguno de estos valores, para evitar cobrar
+   sin poder procesar el webhook que activa el plan.
+   Habilita el portal de clientes de Stripe y sus opciones de cambio/cancelación
+   de planes para que las cuentas con una suscripción existente puedan
+   administrarla sin crear una suscripción duplicada.
+   Mateo no necesita una cuenta ni credenciales.
+   Si Stripe devuelve 503 al iniciar Checkout, revisa que la clave secreta
+   corresponda al modo (test o live) y que ambos Price IDs pertenezcan al mismo
+   modo. Define también `APP_FRONTEND_URL=http://localhost:5173` en desarrollo
+   para que el retorno de Checkout llegue al frontend y no a Laravel.
 
 El formulario de acceso también permite registrar una cuenta nueva. El
-registro está abierto: cualquier persona que cree una cuenta recibe el rol
-`admin`. Si Supabase requiere confirmación de correo, el panel indicará que
-debe confirmar su dirección antes de iniciar sesión.
+formulario ofrece los planes gratis (solo lectura), mensual y anual. Los planes
+pagados continúan a Stripe Checkout; si Supabase requiere confirmación de correo,
+la selección queda guardada en el perfil y Checkout se abre después del primer
+inicio de sesión. El backend verifica las firmas de webhook de Stripe antes de
+actualizar `profiles.plan`, el estado de suscripción, las fechas y los IDs de
+cliente/suscripción. Solo una suscripción activa o en prueba habilita cambios;
+las rutas de escritura comprueban esto en Laravel, incluso si se omite la
+interfaz.
+Los IDs y fechas de facturación no se exponen en la lectura pública de
+`profiles`; solo los campos de perfil no sensibles siguen disponibles. Las
+cuentas con un plan de pago activo administran cambios y cancelaciones mediante
+el portal seguro de Stripe.
 
 El panel permite ordenar, editar y activar/desactivar materias y actividades.
 Las desactivaciones son lógicas para conservar el progreso asociado. Los

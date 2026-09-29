@@ -38,6 +38,16 @@ return [
     'supabase' => [
         'url' => env('SUPABASE_URL'),
         'anon_key' => env('SUPABASE_ANON_KEY'),
+        'service_role_key' => env('SUPABASE_SERVICE_ROLE_KEY'),
+    ],
+
+    'stripe' => [
+        'secret_key' => env('STRIPE_SECRET_KEY'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'monthly_price_id' => env('STRIPE_MONTHLY_PRICE_ID'),
+        'yearly_price_id' => env('STRIPE_YEARLY_PRICE_ID'),
+        'frontend_url' => env('APP_FRONTEND_URL'),
+        'webhook_tolerance' => (int) env('STRIPE_WEBHOOK_TOLERANCE', 300),
     ],
 
 ];

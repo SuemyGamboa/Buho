@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsurePaidAdmin;
 use App\Http\Middleware\EnsureSupabaseAdmin;
 use Database\Seeders\ContentDemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +14,12 @@ use Tests\TestCase;
 class ActivityConfigurationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->withoutMiddleware(EnsurePaidAdmin::class);
+    }
 
     public function test_admin_catalogs_return_seeded_achievements_and_rewards(): void
     {

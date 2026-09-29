@@ -346,6 +346,14 @@ function AdminPanel() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [authMode, setAuthMode] = useState('login');
+  const [selectedPlan, setSelectedPlan] = useState('free');
+  const [billing, setBilling] = useState({
+    plan: 'free',
+    subscription_status: 'active',
+    current_period_end: null,
+    requested_plan: null,
+    read_only: true,
+  });
   const [subjects, setSubjects] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [rewards, setRewards] = useState([]);
@@ -373,6 +381,23 @@ function AdminPanel() {
   const updateCsrfToken = useCallback((token) => {
     csrfTokenRef.current = token;
   }, []);
+  const startCheckout = async (plan, token = csrfTokenRef.current) => {
+    const checkout = await apiRequest('/admin/billing/checkout', {
+      method: 'POST',
+      csrfToken: token,
+      onCsrfToken: updateCsrfToken,
+      body: JSON.stringify({ plan }),
+    });
+    window.location.assign(checkout.url);
+  };
+  const openBillingPortal = async () => {
+    const portal = await apiRequest('/admin/billing/portal', {
+      method: 'POST',
+      csrfToken: csrfTokenRef.current,
+      onCsrfToken: updateCsrfToken,
+    });
+    window.location.assign(portal.url);
+  };
 
   const selectedSubject = useMemo(
     () => subjects.find((subject) => subject.id === selectedSubjectId),
@@ -411,12 +436,17 @@ function AdminPanel() {
         updateCsrfToken(csrf.csrf_token);
 
         try {
-          await apiRequest('/admin/session', {
+          const session = await apiRequest('/admin/session', {
             csrfToken: csrfTokenRef.current,
             onCsrfToken: updateCsrfToken,
           });
           if (!mounted) return;
           setAuthenticated(true);
+          setBilling(session.billing);
+          setSelectedPlan(
+            session.billing?.requested_plan
+            || (session.billing?.plan === 'yearly' ? 'yearly' : 'monthly'),
+          );
           await loadSubjects();
         } catch (sessionError) {
           if (sessionError.message !== 'Inicia sesión para continuar.' &&
@@ -456,6 +486,15 @@ function AdminPanel() {
       });
       setAuthenticated(true);
       updateCsrfToken(response.csrf_token);
+      setBilling(response.billing);
+      setSelectedPlan(
+        response.billing?.requested_plan
+        || (response.billing?.plan === 'yearly' ? 'yearly' : 'monthly'),
+      );
+      if (response.billing?.requested_plan) {
+        await startCheckout(response.billing.requested_plan, response.csrf_token);
+        return;
+      }
       await loadSubjects(response.csrf_token);
     } catch (requestError) {
       setError(requestError.message);
@@ -480,12 +519,24 @@ function AdminPanel() {
           email: formData.get('email'),
           password: formData.get('password'),
           password_confirmation: formData.get('password_confirmation'),
+          plan: formData.get('plan'),
         }),
       });
 
       if (response.authenticated) {
         setAuthenticated(true);
         updateCsrfToken(response.csrf_token);
+        if (response.checkout_plan) {
+          await startCheckout(response.checkout_plan, response.csrf_token);
+          return;
+        }
+        setBilling({
+          plan: 'free',
+          subscription_status: 'active',
+          current_period_end: null,
+          requested_plan: null,
+          read_only: true,
+        });
         await loadSubjects(response.csrf_token);
       } else {
         setSuccess(response.message);
@@ -739,6 +790,25 @@ function AdminPanel() {
             </label>
             {authMode === 'register' && (
               <label>
+                Elige tu plan
+                <select
+                  name="plan"
+                  onChange={(event) => setSelectedPlan(event.target.value)}
+                  value={selectedPlan}
+                >
+                  <option value="free">Gratis · solo lectura</option>
+                  <option value="monthly">Mensual · administrar contenido</option>
+                  <option value="yearly">Anual · administrar contenido</option>
+                </select>
+              </label>
+            )}
+            {authMode === 'register' && selectedPlan !== 'free' && (
+              <p className="admin-plan-checkout-note">
+                Continuarás a Stripe Checkout para confirmar el precio y completar el pago seguro.
+              </p>
+            )}
+            {authMode === 'register' && (
+              <label>
                 Confirmar contraseña
                 <input
                   autoComplete="new-password"
@@ -774,7 +844,7 @@ function AdminPanel() {
           </button>
           <div className="admin-demo-note">
             <span className="material-symbols-outlined">shield_lock</span>
-            El registro está abierto: cada cuenta nueva obtiene acceso de administrador. Mateo sigue siendo una demostración.
+            Elige entre plan gratis, mensual o anual. Mateo sigue siendo una demostración.
           </div>
         </section>
       </main>
@@ -807,6 +877,60 @@ function AdminPanel() {
             <p>Organiza las materias y las actividades que acompañan cada aventura.</p>
           </div>
           <div className="admin-welcome-icon" aria-hidden="true">✨</div>
+        </section>
+
+        <section className="admin-billing-card" aria-labelledby="admin-billing-title">
+          <div className="admin-billing-copy">
+            <span className="admin-eyebrow">PLAN DE LA CUENTA</span>
+            <h2 id="admin-billing-title">
+              {billing.plan === 'monthly' ? 'Plan mensual' : billing.plan === 'yearly' ? 'Plan anual' : 'Plan gratuito'}
+            </h2>
+            <p>
+              {billing.read_only
+                ? 'El plan gratuito permite consultar el contenido. Para crearlo y editarlo, elige un plan de pago.'
+                : `Suscripción ${billing.subscription_status}${billing.current_period_end
+                  ? ` · Vigente hasta ${new Date(billing.current_period_end).toLocaleDateString()}`
+                  : ''}.`}
+            </p>
+          </div>
+          <form
+            className="admin-billing-actions"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError('');
+              setSubmitting(true);
+              const action = billing.can_manage_subscription
+                ? openBillingPortal()
+                : startCheckout(selectedPlan === 'free' ? 'monthly' : selectedPlan);
+              action
+                .catch((requestError) => setError(requestError.message))
+                .finally(() => setSubmitting(false));
+            }}
+          >
+            {billing.can_manage_subscription
+              ? <p>Para cambiar o cancelar tu suscripción, usa el portal seguro de Stripe.</p>
+              : (
+                <label>
+                  Cambiar a
+                  <select
+                    aria-label="Plan de pago"
+                    onChange={(event) => setSelectedPlan(event.target.value)}
+                    value={selectedPlan === 'free' ? 'monthly' : selectedPlan}
+                  >
+                    <option value="monthly">Mensual</option>
+                    <option value="yearly">Anual</option>
+                  </select>
+                </label>
+              )}
+            <button className="admin-primary-button" disabled={submitting} type="submit">
+              {submitting
+                ? 'Abriendo Stripe…'
+                : billing.can_manage_subscription
+                  ? 'Administrar suscripción'
+                  : 'Actualizar plan'}
+              <span className="material-symbols-outlined">credit_card</span>
+            </button>
+          </form>
         </section>
 
         <section className="admin-dashboard-stats" aria-label="Resumen de contenido activo">
@@ -912,7 +1036,7 @@ function AdminPanel() {
                         >
                           <span className="material-symbols-outlined">extension</span>
                         </button>
-                        <button
+                        {!billing.read_only && <button
                           aria-label={`Editar ${subject.name}`}
                           className="admin-icon-button"
                           onClick={() => editSubject(subject)}
@@ -920,14 +1044,14 @@ function AdminPanel() {
                           type="button"
                         >
                           <span className="material-symbols-outlined">edit</span>
-                        </button>
-                        <button
+                        </button>}
+                        {!billing.read_only && <button
                           className="admin-text-button"
                           onClick={() => toggleSubject(subject)}
                           type="button"
                         >
                           {subject.is_active ? 'Desactivar' : 'Activar'}
-                        </button>
+                        </button>}
                       </div>
                     </article>
                   ))}
@@ -935,7 +1059,7 @@ function AdminPanel() {
               )}
             </section>
 
-            <section className="admin-panel-card admin-editor-card">
+            {!billing.read_only && <section className="admin-panel-card admin-editor-card">
               <div className="admin-section-heading">
                 <div>
                   <span className="admin-eyebrow">{editingSubjectId ? 'ACTUALIZAR' : 'NUEVO CONTENIDO'}</span>
@@ -1067,7 +1191,7 @@ function AdminPanel() {
                   </button>
                 )}
               </form>
-            </section>
+            </section>}
           </div>
         ) : (
           <section className="admin-panel-card admin-activities-card">
@@ -1113,21 +1237,21 @@ function AdminPanel() {
                       </span>
                     </div>
                     <div className="admin-row-actions">
-                      <button
+                      {!billing.read_only && <button
                         aria-label={`Editar ${activity.name}`}
                         className="admin-icon-button"
                         onClick={() => editActivity(activity)}
                         type="button"
                       >
                         <span className="material-symbols-outlined">edit</span>
-                      </button>
-                      <button
+                      </button>}
+                      {!billing.read_only && <button
                         className="admin-text-button"
                         onClick={() => toggleActivity(activity)}
                         type="button"
                       >
                         {activity.is_active ? 'Desactivar' : 'Activar'}
-                      </button>
+                      </button>}
                     </div>
                   </article>
                 ))}
@@ -1139,7 +1263,7 @@ function AdminPanel() {
                 )}
               </div>
 
-              <form className="admin-form admin-activity-form" onSubmit={saveActivity}>
+              {!billing.read_only && <form className="admin-form admin-activity-form" onSubmit={saveActivity}>
                 <div className="admin-activity-form-heading">
                   <span className="admin-eyebrow">{editingActivityId ? 'ACTUALIZAR' : 'NUEVO MINIJUEGO'}</span>
                   <h3>{editingActivityId ? 'Editar actividad' : 'Crear actividad'}</h3>
@@ -1666,7 +1790,7 @@ function AdminPanel() {
                     Cancelar edición
                   </button>
                 )}
-              </form>
+              </form>}
             </div>
           </section>
         )}
